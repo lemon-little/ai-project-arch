@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/04-agent-turn.sequence.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/04-agent-turn.html",
+  "specification": {
+    "sha256": "74ec8218ce15dc4d8e1b88aeb4b2697f47cbd7cb89f92b66134e19a51bbdc6eb",
+    "bytes": 4635
+  },
+  "artifact": {
+    "sha256": "e08e59ab37ddac1791abd9e15c6e8a3f47aa70c2f315f25598095fa34cd5a703",
+    "bytes": 716672
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

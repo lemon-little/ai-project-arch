@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "dataflow",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/11-build-and-release.dataflow.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/11-build-and-release.html",
+  "specification": {
+    "sha256": "92be6383d15447ddd1b6856d5b06827bdf11ebdc2c420c4baece623d0cd1cc83",
+    "bytes": 3617
+  },
+  "artifact": {
+    "sha256": "afbdd1ed044efd504d7d936f61f3eb1813cd3fdf5fc3a53ebb29876331539f70",
+    "bytes": 707344
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

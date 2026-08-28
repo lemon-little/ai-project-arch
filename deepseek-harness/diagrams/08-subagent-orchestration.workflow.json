@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "子代理委派与续接流程",
+    "locale": "zh-CN",
+    "output": "diagrams/08-subagent-orchestration.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "delegate",
+        "label": "委派与路由",
+        "focus": [
+          "delegate",
+          "model",
+          "route"
+        ],
+        "note": "父 Agent 提交任务，服务解析模型偏好与 provider 能力。"
+      },
+      {
+        "id": "execute",
+        "label": "创建与执行",
+        "focus": [
+          "route",
+          "create",
+          "run"
+        ],
+        "note": "spawn 新建上下文，fork 继承受控历史，随后进入标准 Agent Loop。"
+      },
+      {
+        "id": "return",
+        "label": "结果与续接",
+        "focus": [
+          "run",
+          "report",
+          "continue"
+        ],
+        "note": "结构化报告回到父上下文，后续可用同一子代理标识继续或中断。"
+      }
+    ],
+    "viewBox": [
+      1000,
+      528
+    ]
+  },
+  "lanes": [
+    {
+      "id": "parent",
+      "label": "Parent Agent"
+    },
+    {
+      "id": "service",
+      "label": "Subagent Service"
+    },
+    {
+      "id": "execution",
+      "label": "Provider + Child + Result"
+    }
+  ],
+  "phases": [
+    {
+      "id": "request-phase",
+      "label": "请求",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "create-phase",
+      "label": "路由与创建",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "return-phase",
+      "label": "执行与回收",
+      "fromCol": 4,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "delegate",
+    "model",
+    "route",
+    "create",
+    "run",
+    "report"
+  ],
+  "nodes": [
+    {
+      "id": "delegate",
+      "lane": "parent",
+      "col": 0,
+      "width": 84,
+      "type": "external",
+      "label": "委派任务",
+      "sublabel": "spawn / fork"
+    },
+    {
+      "id": "model",
+      "lane": "service",
+      "col": 1,
+      "width": 88,
+      "type": "backend",
+      "label": "解析模型",
+      "sublabel": "setting + request"
+    },
+    {
+      "id": "route",
+      "lane": "execution",
+      "col": 2,
+      "width": 92,
+      "type": "messagebus",
+      "label": "选择 Provider",
+      "sublabel": "local / SDK / ACP"
+    },
+    {
+      "id": "create",
+      "lane": "service",
+      "col": 3,
+      "width": 92,
+      "type": "cloud",
+      "label": "创建 Child",
+      "sublabel": "new or forked context"
+    },
+    {
+      "id": "run",
+      "lane": "execution",
+      "col": 4,
+      "width": 86,
+      "type": "backend",
+      "label": "执行子任务",
+      "sublabel": "standard Agent Loop"
+    },
+    {
+      "id": "report",
+      "lane": "execution",
+      "col": 5,
+      "width": 88,
+      "type": "database",
+      "label": "结构化报告",
+      "sublabel": "final output"
+    },
+    {
+      "id": "continue",
+      "lane": "parent",
+      "col": 5,
+      "width": 88,
+      "type": "messagebus",
+      "label": "父 Agent 接收",
+      "sublabel": "result + agent id"
+    }
+  ],
+  "edges": [
+    {
+      "id": "delegate-model",
+      "from": "delegate",
+      "to": "model",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "model-route",
+      "from": "model",
+      "to": "route",
+      "role": "main"
+    },
+    {
+      "id": "route-create",
+      "from": "route",
+      "to": "create",
+      "role": "main"
+    },
+    {
+      "id": "create-run",
+      "from": "create",
+      "to": "run",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "run-report",
+      "from": "run",
+      "to": "report",
+      "role": "main"
+    },
+    {
+      "id": "report-parent",
+      "from": "report",
+      "to": "continue",
+      "role": "branch",
+      "label": "report",
+      "route": "drop",
+      "fromSide": "top",
+      "toSide": "bottom"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "surfaces": {
+    "groups": [
+      "client",
+      "host"
+    ],
+    "package_count": 50
+  },
+  "composition": {
+    "groups": [
+      "boot",
+      "bundle",
+      "extensions",
+      "preset",
+      "settings"
+    ],
+    "package_count": 16
+  },
+  "core": {
+    "groups": [
+      "compaction",
+      "context",
+      "core",
+      "llm"
+    ],
+    "package_count": 25
+  },
+  "providers": {
+    "groups": [
+      "e2b",
+      "mcp",
+      "web"
+    ],
+    "package_count": 10
+  },
+  "interfaces": {
+    "groups": [
+      "acp",
+      "api",
+      "hooks",
+      "sdk",
+      "typert",
+      "webhook"
+    ],
+    "package_count": 25
+  },
+  "capabilities": {
+    "groups": [
+      "fs",
+      "lsp",
+      "shell",
+      "skill",
+      "terminal"
+    ],
+    "package_count": 27
+  },
+  "execution": {
+    "groups": [
+      "code-runtime",
+      "sandbox",
+      "subprocess"
+    ],
+    "package_count": 10
+  },
+  "orchestration": {
+    "groups": [
+      "goal",
+      "jobs",
+      "plan",
+      "schedule",
+      "subagent",
+      "todo",
+      "workflow"
+    ],
+    "package_count": 25
+  },
+  "state": {
+    "groups": [
+      "session",
+      "session-query",
+      "spill",
+      "storage"
+    ],
+    "package_count": 25
+  },
+  "policy": {
+    "groups": [
+      "credentials",
+      "feedback",
+      "guard",
+      "interaction"
+    ],
+    "package_count": 12
+  },
+  "platform": {
+    "groups": [
+      "attachment",
+      "identity",
+      "util",
+      "workspace"
+    ],
+    "package_count": 13
+  },
+  "delivery": {
+    "groups": [
+      "examples",
+      "experimental",
+      "runtime-diagnostics",
+      "test-support"
+    ],
+    "package_count": 16
+  }
+}

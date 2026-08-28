@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/09-execution-sandbox.architecture.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/09-execution-sandbox.html",
+  "specification": {
+    "sha256": "3f66afe80da3bf96e90b2c35beb592e541d2fc5679309799070a4f90fd23a12e",
+    "bytes": 6639
+  },
+  "artifact": {
+    "sha256": "1f6bc161afb84b97849f3259c906be27898c9d8f0eb2c2df3daf68a714b7caec",
+    "bytes": 714017
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "evidence": {
+    "verified": true,
+    "repository": "https://github.com/deepseek-ai/deepseek-harness",
+    "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+    "references": 19
+  }
+}

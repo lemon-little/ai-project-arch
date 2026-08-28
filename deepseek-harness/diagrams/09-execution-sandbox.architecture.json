@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "执行、文件系统与沙箱架构",
+    "locale": "zh-CN",
+    "output": "diagrams/09-execution-sandbox.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "tool-surface",
+        "label": "工具入口",
+        "focus": [
+          "tools",
+          "registry",
+          "policy"
+        ],
+        "note": "FS、Shell 与 Terminal 工具共用调用管线和 Session 级策略。"
+      },
+      {
+        "id": "seams",
+        "label": "能力抽象",
+        "focus": [
+          "policy",
+          "seams",
+          "providers"
+        ],
+        "note": "消费者依赖稳定的 fs、subprocess、terminal seam，再选择 provider。"
+      },
+      {
+        "id": "worlds",
+        "label": "执行世界",
+        "focus": [
+          "providers",
+          "local",
+          "host",
+          "e2b",
+          "remote"
+        ],
+        "note": "本地路径落入跨平台 OS 隔离，E2B 路径落入一次性远程 Linux 世界。"
+      }
+    ],
+    "viewBox": [
+      1380,
+      700
+    ],
+    "repository": {
+      "url": "https://github.com/deepseek-ai/deepseek-harness",
+      "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc"
+    }
+  },
+  "components": [
+    {
+      "id": "tools",
+      "type": "backend",
+      "label": "模型可见工具",
+      "sublabel": "FS / Shell / PTY",
+      "pos": [
+        30,
+        300
+      ],
+      "size": [
+        150,
+        66
+      ],
+      "sources": [
+        {
+          "path": "packages/fs/tool-fs/src/index.ts"
+        },
+        {
+          "path": "packages/shell/tool-bash/src/index.ts"
+        },
+        {
+          "path": "packages/terminal/tool-terminal/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "registry",
+      "type": "messagebus",
+      "label": "Tool Registry",
+      "sublabel": "pre / execute / post",
+      "pos": [
+        220,
+        300
+      ],
+      "size": [
+        150,
+        66
+      ],
+      "sources": [
+        {
+          "path": "packages/core/tools/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "policy",
+      "type": "security",
+      "label": "Sandbox Policy",
+      "sublabel": "session mode + approval",
+      "pos": [
+        410,
+        300
+      ],
+      "size": [
+        150,
+        66
+      ],
+      "sources": [
+        {
+          "path": "packages/sandbox/sandbox-policy/src/index.ts"
+        },
+        {
+          "path": "packages/sandbox/sandbox-policy/src/session-mode.ts"
+        }
+      ]
+    },
+    {
+      "id": "seams",
+      "type": "cloud",
+      "label": "能力 Seams",
+      "sublabel": "fs / subprocess / terminals",
+      "pos": [
+        600,
+        300
+      ],
+      "size": [
+        160,
+        66
+      ],
+      "sources": [
+        {
+          "path": "packages/fs/fs/src/index.ts"
+        },
+        {
+          "path": "packages/subprocess/subprocess/src/index.ts"
+        },
+        {
+          "path": "packages/terminal/terminal/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "providers",
+      "type": "cloud",
+      "label": "Provider 选择",
+      "sublabel": "composition-time binding",
+      "pos": [
+        800,
+        300
+      ],
+      "size": [
+        155,
+        66
+      ],
+      "sources": [
+        {
+          "path": "packages/bundle/base/cordis.patch.yml"
+        }
+      ]
+    },
+    {
+      "id": "local",
+      "type": "security",
+      "label": "Local Providers",
+      "sublabel": "FS + process + PTY",
+      "pos": [
+        990,
+        160
+      ],
+      "size": [
+        155,
+        66
+      ],
+      "sources": [
+        {
+          "path": "packages/fs/fs-local/src/index.ts"
+        },
+        {
+          "path": "packages/subprocess/subprocess-local/src/index.ts"
+        },
+        {
+          "path": "packages/terminal/terminal-bash/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "e2b",
+      "type": "external",
+      "label": "E2B Providers",
+      "sublabel": "shared sandbox",
+      "pos": [
+        990,
+        440
+      ],
+      "size": [
+        155,
+        66
+      ],
+      "sources": [
+        {
+          "path": "packages/e2b/e2b/src/index.ts"
+        },
+        {
+          "path": "packages/e2b/fs-e2b/src/index.ts"
+        },
+        {
+          "path": "packages/e2b/subprocess-e2b/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "host",
+      "type": "external",
+      "label": "Host OS Isolation",
+      "sublabel": "native isolation",
+      "pos": [
+        1180,
+        160
+      ],
+      "size": [
+        165,
+        66
+      ],
+      "sources": [
+        {
+          "path": "packages/sandbox/sandbox-local/src/profiles.ts"
+        },
+        {
+          "path": "native/landlock-run/package.json"
+        }
+      ]
+    },
+    {
+      "id": "remote",
+      "type": "external",
+      "label": "Remote Linux World",
+      "sublabel": "ephemeral runtime",
+      "pos": [
+        1180,
+        440
+      ],
+      "size": [
+        165,
+        66
+      ],
+      "sources": [
+        {
+          "path": "packages/e2b/e2b/README.md"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "tools-registry",
+      "from": "tools",
+      "to": "registry",
+      "variant": "emphasis"
+    },
+    {
+      "id": "registry-policy",
+      "from": "registry",
+      "to": "policy",
+      "variant": "security"
+    },
+    {
+      "id": "policy-seams",
+      "from": "policy",
+      "to": "seams",
+      "variant": "security"
+    },
+    {
+      "id": "seams-providers",
+      "from": "seams",
+      "to": "providers",
+      "variant": "emphasis"
+    },
+    {
+      "id": "providers-local",
+      "from": "providers",
+      "to": "local"
+    },
+    {
+      "id": "providers-e2b",
+      "from": "providers",
+      "to": "e2b",
+      "variant": "dashed"
+    },
+    {
+      "id": "local-host",
+      "from": "local",
+      "to": "host",
+      "variant": "security"
+    },
+    {
+      "id": "e2b-remote",
+      "from": "e2b",
+      "to": "remote",
+      "variant": "emphasis"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "统一策略",
+      "items": [
+        "sandbox/mode 作为 Session 事件持久化",
+        "文件与命令执行解析同一 SandboxPolicy",
+        "平台实现无法建立隔离时 fail closed"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "可移植 Provider",
+      "items": [
+        "消费者不依赖具体 OS 或远程 SDK",
+        "本地支持 Landlock、bwrap、Seatbelt 与 Windows ACL",
+        "E2B 文件和进程共享一个临时远程世界"
+      ]
+    }
+  ]
+}

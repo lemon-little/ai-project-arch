@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>deepseek-harness 架构图集</title>
+  <style>
+    :root { color-scheme: light dark; --bg:#f5f7f9; --panel:#ffffff; --ink:#15202b; --muted:#66717d; --line:#d8dee5; --accent:#087e8b; --warm:#d05a3b; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#101417; --panel:#171d21; --ink:#eef3f5; --muted:#9aa7af; --line:#334047; --accent:#4dc4cf; --warm:#f08a6e; } }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; }
+    main { width:min(1120px,calc(100% - 32px)); margin:0 auto; padding:48px 0 64px; }
+    header { display:grid; grid-template-columns:1fr auto; gap:24px; align-items:end; padding-bottom:28px; border-bottom:1px solid var(--line); }
+    h1 { margin:0; font-size:clamp(32px,5vw,58px); line-height:1.02; letter-spacing:0; }
+    header p { max-width:720px; margin:14px 0 0; color:var(--muted); line-height:1.65; }
+    .version { text-align:right; font:12px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; color:var(--muted); }
+    .version strong { color:var(--accent); font-weight:700; }
+    .section-title { display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin:34px 0 12px; }
+    h2 { margin:0; font-size:18px; letter-spacing:0; }
+    .section-title span { color:var(--muted); font-size:13px; }
+    .diagram-list { border-top:1px solid var(--line); }
+    .diagram-row { display:grid; grid-template-columns:48px minmax(0,1fr) 92px 28px; gap:16px; align-items:center; min-height:88px; color:inherit; text-decoration:none; border-bottom:1px solid var(--line); }
+    .diagram-row:hover { background:color-mix(in srgb,var(--accent) 7%,transparent); }
+    .number { color:var(--warm); font:700 13px/1 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .diagram-copy { min-width:0; display:grid; gap:7px; }
+    .diagram-copy strong { font-size:17px; letter-spacing:0; }
+    .diagram-copy small { color:var(--muted); font-size:13px; line-height:1.45; }
+    .type { color:var(--accent); font:700 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace; text-transform:uppercase; }
+    .arrow { font-size:22px; color:var(--muted); }
+    footer { display:flex; justify-content:space-between; gap:24px; margin-top:30px; color:var(--muted); font-size:12px; line-height:1.6; }
+    footer a { color:var(--accent); }
+    @media (max-width:700px) { main { padding-top:28px; } header { grid-template-columns:1fr; } .version { text-align:left; } .diagram-row { grid-template-columns:36px minmax(0,1fr) 24px; padding:14px 0; } .type { display:none; } footer { display:block; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div><h1>deepseek-harness</h1><p>基于真实源码、生成文档与 Profile 配置整理的交互式架构图集。图集覆盖运行时主干、全部一级包组、关键请求链路、状态与执行边界。</p></div>
+      <div class="version"><strong>dsh-v0.1.2-alpha.1</strong><br>master @ cd5ef81481<br>254 package manifests</div>
+    </header>
+    <div class="section-title"><h2>架构与流程图</h2><span>12 个可独立查看的 HTML</span></div>
+    <nav class="diagram-list" aria-label="架构图列表">
+      <a class="diagram-row" href="diagrams/01-system-landscape.html">
+        <span class="number">01</span>
+        <span class="diagram-copy"><strong>DeepSeek Harness 系统全景</strong><small>从用户入口、Profile 组合、Cordis 容器到 Agent、工具、执行环境与持久化的端到端全景。</small></span>
+        <span class="type">architecture</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/02-module-atlas.html">
+        <span class="number">02</span>
+        <span class="diagram-copy"><strong>Monorepo 模块全景</strong><small>把 packages 目录下 254 个包按职责归入 12 个架构域，覆盖所有一级包组。</small></span>
+        <span class="type">architecture</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/03-profile-boot.html">
+        <span class="number">03</span>
+        <span class="diagram-copy"><strong>Profile 启动与热重载流程</strong><small>dsh 入口如何解析 Profile、叠加 bundle/user/CLI patch，并启动可热重载的 Cordis 插件树。</small></span>
+        <span class="type">workflow</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/04-agent-turn.html">
+        <span class="number">04</span>
+        <span class="diagram-copy"><strong>Agent Turn 与 Step 时序</strong><small>用户输入进入队列后，Agent 如何组装 prompt、流式调用 LLM、执行工具并写入可回放会话事件。</small></span>
+        <span class="type">sequence</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/05-tool-execution.html">
+        <span class="number">05</span>
+        <span class="diagram-copy"><strong>工具执行与策略管线</strong><small>工具调用从持久化、权限审批、单调 guard、沙箱执行到结果冻结和 UI 呈现的完整数据流。</small></span>
+        <span class="type">sequence</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/06-web-control-plane.html">
+        <span class="number">06</span>
+        <span class="diagram-copy"><strong>Web 控制面启动与请求链路</strong><small>浏览器插件图、Connection、WebServer、Typert Gateway 与业务 Controller 之间的请求和事件路径。</small></span>
+        <span class="type">sequence</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/07-session-persistence.html">
+        <span class="number">07</span>
+        <span class="diagram-copy"><strong>会话事件、投影与查询数据流</strong><small>会话事件如何成为 append-only 事实，经 JSONL/SQLite 持久化、投影缓存、查询和遥测供不同消费者使用。</small></span>
+        <span class="type">dataflow</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/08-subagent-orchestration.html">
+        <span class="number">08</span>
+        <span class="diagram-copy"><strong>子代理委派与续接流程</strong><small>父 Agent 如何选择模型和 provider，spawn/fork 子 Agent，并通过报告、控制与 continuation 回收结果。</small></span>
+        <span class="type">workflow</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/09-execution-sandbox.html">
+        <span class="number">09</span>
+        <span class="diagram-copy"><strong>执行、文件系统与沙箱架构</strong><small>文件、Shell、Terminal 如何通过稳定 seam 选择本地或 E2B provider，并由跨平台沙箱策略约束副作用。</small></span>
+        <span class="type">architecture</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/10-remote-api.html">
+        <span class="number">10</span>
+        <span class="diagram-copy"><strong>Typert Remote API 调用时序</strong><small>从 @Remote 声明和生成契约到浏览器调用、Host lookup、业务执行、响应校验与取消的严格链路。</small></span>
+        <span class="type">sequence</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/11-build-and-release.html">
+        <span class="number">11</span>
+        <span class="diagram-copy"><strong>构建、契约生成与发布流水线</strong><small>Host/Client 分阶段构建、Typert 代码生成、Web 打包、质量门禁与多语言/多运行时发布产物。</small></span>
+        <span class="type">dataflow</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+      <a class="diagram-row" href="diagrams/12-agent-state-lifecycle.html">
+        <span class="number">12</span>
+        <span class="diagram-copy"><strong>Agent 运行状态生命周期</strong><small>Agent 从 idle、排队、Turn/Step 执行到工具等待、重试、停止或失败的状态转换。</small></span>
+        <span class="type">lifecycle</span>
+        <span class="arrow" aria-hidden="true">&#8594;</span>
+      </a>
+    </nav>
+    <footer><span>每个 HTML 均为 Archify 生成的自包含文件，可直接双击打开。</span><span><a href="README.md">项目说明</a> · <a href="source-version/source.json">源码版本</a> · <a href="manifest.json">图集清单</a></span></footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Typert Remote API 调用时序",
+    "locale": "zh-CN",
+    "output": "diagrams/10-remote-api.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "generated-contract",
+        "label": "生成契约",
+        "focus": [
+          "business",
+          "generator",
+          "remoteClient"
+        ],
+        "note": "@Remote 声明在 Host 构建阶段生成双端描述符、codec 和类型。"
+      },
+      {
+        "id": "runtime-call",
+        "label": "运行时调用",
+        "focus": [
+          "ui",
+          "remoteClient",
+          "connection",
+          "gateway",
+          "registry",
+          "business"
+        ],
+        "note": "Client 发送命名 args，Host 严格校验、解析对象并调用当前服务。"
+      },
+      {
+        "id": "failure-boundary",
+        "label": "失败与取消",
+        "focus": [
+          "ui",
+          "connection",
+          "gateway",
+          "business"
+        ],
+        "note": "缺失 provider、schema 错误、卸载和 AbortSignal 都有显式失败语义。"
+      }
+    ],
+    "viewBox": [
+      1220,
+      642
+    ],
+    "column_fit": "spread"
+  },
+  "participants": [
+    {
+      "id": "business",
+      "type": "backend",
+      "label": "Business Service"
+    },
+    {
+      "id": "generator",
+      "type": "cloud",
+      "label": "Typert Generator"
+    },
+    {
+      "id": "remoteClient",
+      "type": "frontend",
+      "label": "Client Remote"
+    },
+    {
+      "id": "ui",
+      "type": "external",
+      "label": "UI / SDK Caller"
+    },
+    {
+      "id": "connection",
+      "type": "security",
+      "label": "Connection"
+    },
+    {
+      "id": "gateway",
+      "type": "security",
+      "label": "Host Gateway"
+    },
+    {
+      "id": "registry",
+      "type": "database",
+      "label": "Typert Registry"
+    }
+  ],
+  "messages": [
+    {
+      "id": "decorators",
+      "from": "business",
+      "to": "generator",
+      "y": 160,
+      "label": "@Remote / @RemoteScope",
+      "variant": "emphasis"
+    },
+    {
+      "id": "host-artifact",
+      "from": "generator",
+      "to": "registry",
+      "y": 188,
+      "label": "typert.host.js + codecs"
+    },
+    {
+      "id": "client-artifact",
+      "from": "generator",
+      "to": "remoteClient",
+      "y": 216,
+      "label": "remote-client.js + d.ts",
+      "variant": "return"
+    },
+    {
+      "id": "mount-contract",
+      "from": "remoteClient",
+      "to": "ui",
+      "y": 244,
+      "label": "ctx.remote.<namespace>",
+      "variant": "return"
+    },
+    {
+      "id": "call",
+      "from": "ui",
+      "to": "remoteClient",
+      "y": 272,
+      "label": "concrete method(args, signal)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "rpc",
+      "from": "remoteClient",
+      "to": "connection",
+      "y": 300,
+      "label": "rpc.call('/api', endpoint, { args })",
+      "variant": "security"
+    },
+    {
+      "id": "dispatch",
+      "from": "connection",
+      "to": "gateway",
+      "y": 328,
+      "label": "POST /api/<namespace>/<method>"
+    },
+    {
+      "id": "descriptor",
+      "from": "gateway",
+      "to": "registry",
+      "y": 356,
+      "label": "resolve descriptor + live binding",
+      "variant": "security"
+    },
+    {
+      "id": "lookup",
+      "from": "registry",
+      "to": "gateway",
+      "y": 384,
+      "label": "codec + lookup/context provider",
+      "variant": "return"
+    },
+    {
+      "id": "invoke-business",
+      "from": "gateway",
+      "to": "business",
+      "y": 412,
+      "label": "invoke current Cordis service",
+      "variant": "emphasis"
+    },
+    {
+      "id": "business-result",
+      "from": "business",
+      "to": "gateway",
+      "y": 440,
+      "label": "typed result",
+      "variant": "return"
+    },
+    {
+      "id": "validated-result",
+      "from": "gateway",
+      "to": "ui",
+      "y": 468,
+      "label": "validated response envelope",
+      "variant": "return"
+    },
+    {
+      "id": "abort",
+      "from": "ui",
+      "to": "connection",
+      "y": 496,
+      "label": "AbortSignal",
+      "variant": "security"
+    },
+    {
+      "id": "cancel-host",
+      "from": "connection",
+      "to": "gateway",
+      "y": 524,
+      "label": "cancel in-flight invocation",
+      "variant": "dashed"
+    },
+    {
+      "id": "unmount",
+      "from": "registry",
+      "to": "remoteClient",
+      "y": 552,
+      "label": "withdraw descriptor + stale handles",
+      "variant": "dashed"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "lifecycle",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/12-agent-state-lifecycle.lifecycle.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/12-agent-state-lifecycle.html",
+  "specification": {
+    "sha256": "71c2616cf8f149ee0cf576bd03bb99dbd91fd1ab30612a599ef623e817b3ad4c",
+    "bytes": 4756
+  },
+  "artifact": {
+    "sha256": "4f6ab6cd2b224c22bf99a72042075d4289ee535b97ec99f0f123a6b5bc892e1c",
+    "bytes": 713385
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

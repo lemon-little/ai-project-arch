@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Profile 启动与热重载流程",
+    "locale": "zh-CN",
+    "output": "diagrams/03-profile-boot.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "cold-start",
+        "label": "冷启动主链",
+        "focus": [
+          "argv",
+          "profile",
+          "patches",
+          "context",
+          "mount",
+          "ready"
+        ],
+        "note": "从 dsh 参数到全部 Cordis entry 激活。"
+      },
+      {
+        "id": "overrides",
+        "label": "配置优先级",
+        "focus": [
+          "profile",
+          "patches"
+        ],
+        "note": "bundle、profile、home、--patch 和 telemetry switch 按顺序组合。"
+      },
+      {
+        "id": "hot-reload",
+        "label": "热重载",
+        "focus": [
+          "ready",
+          "hmr",
+          "mount"
+        ],
+        "note": "配置变化重新读取用户层，并由 Loader 事务性更新插件树。"
+      }
+    ],
+    "viewBox": [
+      1000,
+      528
+    ]
+  },
+  "lanes": [
+    {
+      "id": "launcher",
+      "label": "CLI Launcher"
+    },
+    {
+      "id": "composition",
+      "label": "Profile Composition"
+    },
+    {
+      "id": "runtime",
+      "label": "Cordis Runtime"
+    }
+  ],
+  "phases": [
+    {
+      "id": "resolve",
+      "label": "解析",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "compose-phase",
+      "label": "组合",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "activate",
+      "label": "激活与运行",
+      "fromCol": 4,
+      "toCol": 5
+    }
+  ],
+  "mainPath": [
+    "argv",
+    "profile",
+    "patches",
+    "context",
+    "mount",
+    "ready"
+  ],
+  "nodes": [
+    {
+      "id": "argv",
+      "lane": "launcher",
+      "col": 0,
+      "width": 82,
+      "type": "external",
+      "label": "解析 argv",
+      "sublabel": "profile + app args"
+    },
+    {
+      "id": "profile",
+      "lane": "composition",
+      "col": 1,
+      "width": 88,
+      "type": "cloud",
+      "label": "解析 Profile",
+      "sublabel": "$DSH_HOME profile"
+    },
+    {
+      "id": "patches",
+      "lane": "runtime",
+      "col": 2,
+      "width": 92,
+      "type": "messagebus",
+      "label": "叠加 Patch",
+      "sublabel": "bundle / user / CLI"
+    },
+    {
+      "id": "context",
+      "lane": "launcher",
+      "col": 3,
+      "width": 88,
+      "type": "backend",
+      "label": "创建 Context",
+      "sublabel": "冻结启动快照"
+    },
+    {
+      "id": "mount",
+      "lane": "composition",
+      "col": 4,
+      "width": 88,
+      "type": "backend",
+      "label": "Loader 挂载",
+      "sublabel": "include plugin tree"
+    },
+    {
+      "id": "ready",
+      "lane": "runtime",
+      "col": 5,
+      "width": 82,
+      "type": "cloud",
+      "label": "应用就绪",
+      "sublabel": "entries active"
+    },
+    {
+      "id": "hmr",
+      "lane": "runtime",
+      "col": 4,
+      "width": 82,
+      "type": "messagebus",
+      "label": "Patch HMR",
+      "sublabel": "重读用户层"
+    }
+  ],
+  "edges": [
+    {
+      "id": "parse-profile",
+      "from": "argv",
+      "to": "profile",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "load-layers",
+      "from": "profile",
+      "to": "patches",
+      "role": "main"
+    },
+    {
+      "id": "create-context",
+      "from": "patches",
+      "to": "context",
+      "role": "main"
+    },
+    {
+      "id": "mount-tree",
+      "from": "context",
+      "to": "mount",
+      "role": "main"
+    },
+    {
+      "id": "settle-tree",
+      "from": "mount",
+      "to": "ready",
+      "role": "main",
+      "variant": "emphasis"
+    },
+    {
+      "id": "watch-layer",
+      "from": "ready",
+      "to": "hmr",
+      "role": "async",
+      "variant": "dashed",
+      "route": "straight",
+      "fromSide": "left",
+      "toSide": "right"
+    },
+    {
+      "id": "reload-tree",
+      "from": "hmr",
+      "to": "mount",
+      "role": "return",
+      "label": "事务性重组",
+      "route": "straight",
+      "fromSide": "top",
+      "toSide": "bottom",
+      "labelDx": 64
+    }
+  ]
+}

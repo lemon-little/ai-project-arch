@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Agent Turn 与 Step 时序",
+    "locale": "zh-CN",
+    "output": "diagrams/04-agent-turn.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "claim-and-request",
+        "label": "认领输入并请求模型",
+        "focus": [
+          "user",
+          "agent",
+          "driver",
+          "prompt",
+          "llm"
+        ],
+        "note": "输入批次经 pre-step 和系统提示组装后形成一次模型请求。"
+      },
+      {
+        "id": "tool-round",
+        "label": "工具回合",
+        "focus": [
+          "driver",
+          "tools",
+          "session"
+        ],
+        "note": "模型工具调用按屏障与有界并发执行，结果仍按模型顺序记录。"
+      },
+      {
+        "id": "durable-observation",
+        "label": "持久化与观察",
+        "focus": [
+          "session",
+          "sdk"
+        ],
+        "note": "session/event 是可回放事实，agent/* 只承载实时协调状态。"
+      }
+    ],
+    "viewBox": [
+      1220,
+      696
+    ],
+    "column_fit": "spread"
+  },
+  "participants": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "用户"
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agent Registry"
+    },
+    {
+      "id": "driver",
+      "type": "backend",
+      "label": "Agent Loop"
+    },
+    {
+      "id": "hooks",
+      "type": "security",
+      "label": "Hooks"
+    },
+    {
+      "id": "prompt",
+      "type": "messagebus",
+      "label": "System Prompt"
+    },
+    {
+      "id": "llm",
+      "type": "cloud",
+      "label": "LLM Provider"
+    },
+    {
+      "id": "tools",
+      "type": "security",
+      "label": "Tools"
+    },
+    {
+      "id": "session",
+      "type": "database",
+      "label": "Session"
+    },
+    {
+      "id": "sdk",
+      "type": "frontend",
+      "label": "UI / SDK"
+    }
+  ],
+  "messages": [
+    {
+      "id": "followup",
+      "from": "user",
+      "to": "agent",
+      "y": 160,
+      "label": "followup(content)",
+      "variant": "emphasis"
+    },
+    {
+      "id": "inbox-event",
+      "from": "agent",
+      "to": "sdk",
+      "y": 188,
+      "label": "agent/inbox/inserted",
+      "variant": "dashed"
+    },
+    {
+      "id": "wake-driver",
+      "from": "agent",
+      "to": "driver",
+      "y": 216,
+      "label": "queued work wakes driver"
+    },
+    {
+      "id": "turn-start",
+      "from": "driver",
+      "to": "session",
+      "y": 244,
+      "label": "turn/start",
+      "variant": "emphasis"
+    },
+    {
+      "id": "pre-step",
+      "from": "driver",
+      "to": "hooks",
+      "y": 272,
+      "label": "agent/pre-step waterfall",
+      "variant": "security"
+    },
+    {
+      "id": "step-start",
+      "from": "driver",
+      "to": "session",
+      "y": 300,
+      "label": "step/start + user/message"
+    },
+    {
+      "id": "assemble",
+      "from": "driver",
+      "to": "prompt",
+      "y": 328,
+      "label": "system-prompt/assemble"
+    },
+    {
+      "id": "request",
+      "from": "driver",
+      "to": "llm",
+      "y": 356,
+      "label": "agent/request -> llm/stream",
+      "variant": "emphasis"
+    },
+    {
+      "id": "chunks",
+      "from": "llm",
+      "to": "driver",
+      "y": 384,
+      "label": "StreamChunk*",
+      "variant": "return"
+    },
+    {
+      "id": "chunk-events",
+      "from": "driver",
+      "to": "session",
+      "y": 412,
+      "label": "assistant/chunk*",
+      "variant": "dashed"
+    },
+    {
+      "id": "assistant-message",
+      "from": "driver",
+      "to": "session",
+      "y": 440,
+      "label": "assistant/message"
+    },
+    {
+      "id": "tool-call",
+      "from": "driver",
+      "to": "tools",
+      "y": 468,
+      "label": "ordered pre + concurrent execute",
+      "variant": "security"
+    },
+    {
+      "id": "tool-events",
+      "from": "tools",
+      "to": "session",
+      "y": 496,
+      "label": "tool/call + tool/result",
+      "variant": "return"
+    },
+    {
+      "id": "session-events",
+      "from": "session",
+      "to": "sdk",
+      "y": 524,
+      "label": "session/event stream",
+      "variant": "dashed"
+    },
+    {
+      "id": "step-end",
+      "from": "driver",
+      "to": "session",
+      "y": 552,
+      "label": "step/end"
+    },
+    {
+      "id": "turn-end",
+      "from": "driver",
+      "to": "session",
+      "y": 580,
+      "label": "turn/end",
+      "variant": "emphasis"
+    },
+    {
+      "id": "idle",
+      "from": "driver",
+      "to": "sdk",
+      "y": 608,
+      "label": "agent/status = idle",
+      "variant": "return"
+    }
+  ]
+}

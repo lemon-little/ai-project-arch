@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "Agent 运行状态生命周期",
+    "locale": "zh-CN",
+    "output": "diagrams/12-agent-state-lifecycle.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "normal-run",
+        "label": "正常运行",
+        "focus": [
+          "idle",
+          "queued",
+          "turn",
+          "step",
+          "stopping",
+          "complete"
+        ],
+        "note": "从 followup 唤醒到 Step 完成和 Turn 收束。"
+      },
+      {
+        "id": "tool-wait",
+        "label": "工具等待",
+        "focus": [
+          "step",
+          "tools",
+          "stopping"
+        ],
+        "note": "工具批次通过屏障和有界并发完成，再回到停止判定。"
+      },
+      {
+        "id": "recovery",
+        "label": "恢复与失败",
+        "focus": [
+          "step",
+          "retry",
+          "turn",
+          "failed"
+        ],
+        "note": "只有 pruning 或 summary 推进 surface generation 后才进入新的 Turn。"
+      }
+    ],
+    "viewBox": [
+      1080,
+      640
+    ]
+  },
+  "lanes": [
+    {
+      "id": "main",
+      "label": "Turn 主状态"
+    },
+    {
+      "id": "waitingLane",
+      "label": "等待与恢复"
+    },
+    {
+      "id": "terminal",
+      "label": "终止状态"
+    }
+  ],
+  "states": [
+    {
+      "id": "idle",
+      "type": "start",
+      "label": "Idle",
+      "sublabel": "等待任务",
+      "lane": "main",
+      "col": 0,
+      "step": "01"
+    },
+    {
+      "id": "queued",
+      "type": "active",
+      "label": "Queued",
+      "sublabel": "inbox 已插入",
+      "lane": "main",
+      "col": 1,
+      "step": "02"
+    },
+    {
+      "id": "turn",
+      "type": "active",
+      "label": "Turn Running",
+      "sublabel": "turn/start",
+      "lane": "main",
+      "col": 2,
+      "step": "03"
+    },
+    {
+      "id": "step",
+      "type": "active",
+      "label": "Step Running",
+      "sublabel": "prompt + LLM",
+      "lane": "main",
+      "col": 3,
+      "step": "04"
+    },
+    {
+      "id": "stopping",
+      "type": "decision",
+      "label": "Turn Stopping",
+      "sublabel": "检查 next-step input",
+      "lane": "main",
+      "col": 4,
+      "step": "05"
+    },
+    {
+      "id": "retry",
+      "type": "failure",
+      "label": "Recover Context",
+      "sublabel": "prune or summarize",
+      "lane": "waitingLane",
+      "col": 0,
+      "tag": "recoverable"
+    },
+    {
+      "id": "tools",
+      "type": "waiting",
+      "label": "Tool Batch",
+      "sublabel": "ordered results",
+      "lane": "waitingLane",
+      "col": 1
+    },
+    {
+      "id": "failed",
+      "type": "failure",
+      "label": "Request Failed",
+      "sublabel": "original error",
+      "lane": "terminal",
+      "col": 0,
+      "tag": "terminal"
+    },
+    {
+      "id": "complete",
+      "type": "success",
+      "label": "Idle Again",
+      "sublabel": "turn/end + idle",
+      "lane": "terminal",
+      "col": 2,
+      "tag": "success"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "idle-queued",
+      "from": "idle",
+      "to": "queued",
+      "variant": "emphasis"
+    },
+    {
+      "id": "queued-turn",
+      "from": "queued",
+      "to": "turn"
+    },
+    {
+      "id": "turn-step",
+      "from": "turn",
+      "to": "step",
+      "variant": "emphasis",
+      "route": "straight",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "step-stopping",
+      "from": "step",
+      "to": "stopping",
+      "route": "straight",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "stopping-complete",
+      "from": "stopping",
+      "to": "complete",
+      "label": "no pending input",
+      "variant": "emphasis",
+      "route": "drop",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "step-tools",
+      "from": "step",
+      "to": "tools",
+      "label": "tool calls",
+      "route": "drop",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "tools-stopping",
+      "from": "tools",
+      "to": "stopping",
+      "label": "batch settled",
+      "variant": "dashed"
+    },
+    {
+      "id": "step-retry",
+      "from": "step",
+      "to": "retry",
+      "label": "context overflow",
+      "variant": "security"
+    },
+    {
+      "id": "retry-turn",
+      "from": "retry",
+      "to": "turn",
+      "label": "surface advanced",
+      "variant": "emphasis",
+      "route": "straight",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "retry-failed",
+      "from": "retry",
+      "to": "failed",
+      "label": "no progress",
+      "variant": "security",
+      "route": "drop",
+      "fromSide": "bottom",
+      "toSide": "top"
+    }
+  ]
+}

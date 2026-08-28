@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/08-subagent-orchestration.workflow.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/08-subagent-orchestration.html",
+  "specification": {
+    "sha256": "2c3536c1dacdbacfef3f9932f57d28f968df15d3e8de26868d86db99a4d959cd",
+    "bytes": 3977
+  },
+  "artifact": {
+    "sha256": "e6462d0b95009a33c1c94fd128e32f745fc0c105548d0000c2a8a3ae845596cc",
+    "bytes": 708726
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/06-web-control-plane.sequence.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/06-web-control-plane.html",
+  "specification": {
+    "sha256": "efe10d1292a1b369617b0c78c8dbad4aa04137e93af60c705825f6c9c0d60170",
+    "bytes": 4200
+  },
+  "artifact": {
+    "sha256": "2e5d07ee3a6559dae86f94582fb6a4cbf12991d103199869ffc2e8193f2dcaf3",
+    "bytes": 715401
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

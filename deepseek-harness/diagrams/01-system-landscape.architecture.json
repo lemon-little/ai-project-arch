@@ -1,0 +1,450 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "DeepSeek Harness 系统全景",
+    "locale": "zh-CN",
+    "output": "diagrams/01-system-landscape.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "request-path",
+        "label": "一次请求",
+        "focus": [
+          "entrypoints",
+          "profiles",
+          "cordis",
+          "agent",
+          "tools",
+          "providers"
+        ],
+        "note": "沿主路径查看任务如何进入插件运行时并调用能力提供者。"
+      },
+      {
+        "id": "control-plane",
+        "label": "控制面",
+        "focus": [
+          "surfaces",
+          "api",
+          "cordis",
+          "agent"
+        ],
+        "note": "Web、SDK 与 ACP 通过显式协议接入同一个 Agent 核心。"
+      },
+      {
+        "id": "state-and-extension",
+        "label": "状态与扩展",
+        "focus": [
+          "agent",
+          "state",
+          "tools",
+          "extensions"
+        ],
+        "note": "会话事件持久化，工具和扩展保持可插拔。"
+      }
+    ],
+    "viewBox": [
+      1360,
+      760
+    ],
+    "repository": {
+      "url": "https://github.com/deepseek-ai/deepseek-harness",
+      "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc"
+    }
+  },
+  "components": [
+    {
+      "id": "entrypoints",
+      "type": "external",
+      "label": "用户与自动化",
+      "sublabel": "CLI / Browser / SDK / ACP",
+      "pos": [
+        30,
+        310
+      ],
+      "size": [
+        150,
+        68
+      ],
+      "sources": [
+        {
+          "path": "apps/cli/src/bin.ts"
+        }
+      ]
+    },
+    {
+      "id": "profiles",
+      "type": "cloud",
+      "label": "dsh Profiles",
+      "sublabel": "bundle + patch layers",
+      "pos": [
+        220,
+        310
+      ],
+      "size": [
+        150,
+        68
+      ],
+      "sources": [
+        {
+          "path": "apps/cli/src/profile-boot.ts"
+        },
+        {
+          "path": "packages/bundle/base/cordis.patch.yml"
+        }
+      ]
+    },
+    {
+      "id": "cordis",
+      "type": "backend",
+      "label": "Cordis 插件容器",
+      "sublabel": "Context / Loader / Fiber",
+      "pos": [
+        410,
+        310
+      ],
+      "size": [
+        150,
+        68
+      ],
+      "sources": [
+        {
+          "path": "packages/boot/app-boot/src/index.ts"
+        },
+        {
+          "path": "vendor/cordis/src/context.ts"
+        }
+      ]
+    },
+    {
+      "id": "agent",
+      "type": "backend",
+      "label": "Agent 核心",
+      "sublabel": "registry + loop + prompt",
+      "pos": [
+        600,
+        310
+      ],
+      "size": [
+        150,
+        68
+      ],
+      "sources": [
+        {
+          "path": "packages/core/agent/src/index.ts"
+        },
+        {
+          "path": "packages/core/agent-loop/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "messagebus",
+      "label": "工具执行管线",
+      "sublabel": "policy / guard / hooks",
+      "pos": [
+        790,
+        310
+      ],
+      "size": [
+        150,
+        68
+      ],
+      "sources": [
+        {
+          "path": "packages/core/tools/src/index.ts"
+        },
+        {
+          "path": "docs/tool-execution-pipeline.md"
+        }
+      ]
+    },
+    {
+      "id": "providers",
+      "type": "cloud",
+      "label": "能力提供者",
+      "sublabel": "LLM / FS / Shell / Web",
+      "pos": [
+        980,
+        310
+      ],
+      "size": [
+        150,
+        68
+      ],
+      "sources": [
+        {
+          "path": "docs/capability-seams.md"
+        },
+        {
+          "path": "packages/llm/llm/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "execution",
+      "type": "security",
+      "label": "执行环境",
+      "sublabel": "Local sandbox / E2B",
+      "pos": [
+        1170,
+        310
+      ],
+      "size": [
+        150,
+        68
+      ],
+      "sources": [
+        {
+          "path": "packages/sandbox/sandbox-local/src/index.ts"
+        },
+        {
+          "path": "packages/e2b/e2b/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "surfaces",
+      "type": "frontend",
+      "label": "交互表面",
+      "sublabel": "Web UI / headless",
+      "pos": [
+        220,
+        105
+      ],
+      "size": [
+        150,
+        68
+      ],
+      "sources": [
+        {
+          "path": "packages/bundle/web-app/cordis.patch.yml"
+        },
+        {
+          "path": "packages/bundle/headless/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "api",
+      "type": "security",
+      "label": "Typert API / SDK",
+      "sublabel": "Remote + JSON-RPC",
+      "pos": [
+        505,
+        105
+      ],
+      "size": [
+        150,
+        68
+      ],
+      "sources": [
+        {
+          "path": "packages/api/gateway/src/index.ts"
+        },
+        {
+          "path": "packages/sdk/protocol/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "type": "database",
+      "label": "会话与应用状态",
+      "sublabel": "JSONL / SQLite / projections",
+      "pos": [
+        600,
+        515
+      ],
+      "size": [
+        170,
+        68
+      ],
+      "sources": [
+        {
+          "path": "packages/session/session-persistence/src/index.ts"
+        },
+        {
+          "path": "packages/session/session-persistence-jsonl/src/index.ts"
+        },
+        {
+          "path": "packages/session/session-persistence-sqlite/src/index.ts"
+        }
+      ]
+    },
+    {
+      "id": "extensions",
+      "type": "external",
+      "label": "扩展与编排",
+      "sublabel": "subagent / workflow / hooks",
+      "pos": [
+        980,
+        105
+      ],
+      "size": [
+        170,
+        68
+      ],
+      "sources": [
+        {
+          "path": "packages/subagent/subagent/src/index.ts"
+        },
+        {
+          "path": "packages/workflow/workflow/src/index.ts"
+        },
+        {
+          "path": "packages/hooks/hook-protocol/src/index.ts"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "enter",
+      "from": "entrypoints",
+      "to": "profiles",
+      "label": "选择运行表面",
+      "variant": "emphasis",
+      "labelAt": [
+        200,
+        392
+      ]
+    },
+    {
+      "id": "compose",
+      "from": "profiles",
+      "to": "cordis",
+      "label": "组合 patch 层",
+      "labelAt": [
+        390,
+        306
+      ]
+    },
+    {
+      "id": "mount",
+      "from": "cordis",
+      "to": "agent",
+      "label": "挂载服务",
+      "labelAt": [
+        580,
+        392
+      ]
+    },
+    {
+      "id": "dispatch",
+      "from": "agent",
+      "to": "tools",
+      "label": "tool calls",
+      "variant": "emphasis",
+      "labelAt": [
+        770,
+        306
+      ]
+    },
+    {
+      "id": "resolve-provider",
+      "from": "tools",
+      "to": "providers",
+      "label": "按 seam 分派",
+      "labelAt": [
+        960,
+        392
+      ]
+    },
+    {
+      "id": "enforce",
+      "from": "providers",
+      "to": "execution",
+      "label": "受策略约束",
+      "variant": "security",
+      "labelAt": [
+        1150,
+        306
+      ]
+    },
+    {
+      "id": "surface-profile",
+      "from": "surfaces",
+      "to": "profiles",
+      "label": "Profile 配置",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        295,
+        210
+      ]
+    },
+    {
+      "id": "surface-api",
+      "from": "surfaces",
+      "to": "api",
+      "label": "RPC / events"
+    },
+    {
+      "id": "api-agent",
+      "from": "api",
+      "to": "agent",
+      "label": "控制与观察",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "dashed"
+    },
+    {
+      "id": "persist",
+      "from": "agent",
+      "to": "state",
+      "label": "session/event",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "emphasis"
+    },
+    {
+      "id": "extend-agent",
+      "from": "extensions",
+      "to": "agent",
+      "label": "组合能力",
+      "fromSide": "left",
+      "toSide": "top",
+      "variant": "dashed"
+    },
+    {
+      "id": "extend-tools",
+      "from": "extensions",
+      "to": "tools",
+      "label": "注册工具",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "架构原则",
+      "items": [
+        "所有应用由 dsh Profile 启动",
+        "Cordis 服务定义与提供者解耦",
+        "运行能力由插件树组合而非硬编码"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "状态原则",
+      "items": [
+        "session/event 是可回放事实",
+        "实时 agent/* 事件负责协调",
+        "JSONL 与 SQLite 是可替换持久化实现"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "执行边界",
+      "items": [
+        "工具先经过权限、guard 与 hook",
+        "本地和 E2B 共用抽象 seam",
+        "外部接口不绕过核心 Agent 服务"
+      ]
+    }
+  ]
+}

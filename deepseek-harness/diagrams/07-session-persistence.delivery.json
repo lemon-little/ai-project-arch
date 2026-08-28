@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "dataflow",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/07-session-persistence.dataflow.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/07-session-persistence.html",
+  "specification": {
+    "sha256": "c30aecc72cd1cbfb0e62fe71751b673acdf8dc24566d7dd1faa257830e913d4c",
+    "bytes": 4433
+  },
+  "artifact": {
+    "sha256": "51fe15c1d400b5c5673ec15412f7b03e4d8ee7c95ccf4ed14a863219ce80225d",
+    "bytes": 713265
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

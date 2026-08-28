@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "构建、契约生成与发布流水线",
+    "locale": "zh-CN",
+    "output": "diagrams/11-build-and-release.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "host-phase",
+        "label": "Host 阶段",
+        "focus": [
+          "source",
+          "hostTsc",
+          "contracts"
+        ],
+        "note": "Host Project References 先编译，tsdown 同步生成 Typert 双端契约。"
+      },
+      {
+        "id": "client-phase",
+        "label": "Client 阶段",
+        "focus": [
+          "contracts",
+          "clientTsc"
+        ],
+        "note": "Client 类型检查消费刚生成的 Remote 声明，然后产出浏览器插件。"
+      },
+      {
+        "id": "release",
+        "label": "门禁与发布",
+        "focus": [
+          "clientTsc",
+          "artifacts"
+        ],
+        "note": "仓库门禁通过后形成 npm、dsh 与 Python SDK 交付。"
+      }
+    ],
+    "viewBox": [
+      1080,
+      660
+    ]
+  },
+  "stages": [
+    {
+      "label": "源码"
+    },
+    {
+      "label": "Host 构建"
+    },
+    {
+      "label": "生成契约"
+    },
+    {
+      "label": "Client + Web"
+    },
+    {
+      "label": "门禁与发布"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "source",
+      "type": "external",
+      "label": "Workspace 源码",
+      "sublabel": "TS / TSX / YAML",
+      "stage": 0,
+      "row": 1,
+      "width": 116
+    },
+    {
+      "id": "hostTsc",
+      "type": "backend",
+      "label": "Host Build",
+      "sublabel": "tsc + tsdown",
+      "stage": 1,
+      "row": 1,
+      "width": 110
+    },
+    {
+      "id": "contracts",
+      "type": "messagebus",
+      "label": "Typert Artifacts",
+      "sublabel": "host + remote-client",
+      "stage": 2,
+      "row": 1,
+      "width": 116
+    },
+    {
+      "id": "clientTsc",
+      "type": "frontend",
+      "label": "Client + Web Build",
+      "sublabel": "tsc + tsdown + Vite",
+      "stage": 3,
+      "row": 1,
+      "width": 132
+    },
+    {
+      "id": "artifacts",
+      "type": "database",
+      "label": "验证后发布",
+      "sublabel": "npm / dsh / Python",
+      "stage": 4,
+      "row": 1,
+      "width": 116
+    }
+  ],
+  "flows": [
+    {
+      "id": "source-host-tsc",
+      "from": "source",
+      "to": "hostTsc",
+      "label": "project refs",
+      "classification": "host face",
+      "variant": "emphasis"
+    },
+    {
+      "id": "host-contracts",
+      "from": "hostTsc",
+      "to": "contracts",
+      "label": "Typert generator",
+      "classification": "strict codecs",
+      "variant": "emphasis"
+    },
+    {
+      "id": "contracts-client-tsc",
+      "from": "contracts",
+      "to": "clientTsc",
+      "label": "generated DTS",
+      "classification": "client types"
+    },
+    {
+      "id": "client-release",
+      "from": "clientTsc",
+      "to": "artifacts",
+      "label": "repository gates",
+      "classification": "test + types + lint + docs",
+      "variant": "security",
+      "labelAt": [
+        857,
+        314
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "严格顺序",
+      "items": [
+        "Host lib 必须先于 Client lib",
+        "Typert 生成发生在 Host tsdown 阶段",
+        "Client 编译消费本次生成的契约"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "发布边界",
+      "items": [
+        "测试、类型、lint、hygiene 与文档门禁共同生效",
+        "包 exports 与 files 清单自动校验",
+        "源码 fallback 不替代发布契约生成"
+      ]
+    }
+  ]
+}

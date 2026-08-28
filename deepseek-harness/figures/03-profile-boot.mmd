@@ -1,0 +1,15 @@
+flowchart LR
+  argv["解析 argv<br/>profile + app args"]
+  profile["解析 Profile<br/>$DSH_HOME profile"]
+  patches["叠加 Patch<br/>bundle / user / CLI"]
+  context["创建 Context<br/>冻结启动快照"]
+  mount["Loader 挂载<br/>include plugin tree"]
+  ready["应用就绪<br/>entries active"]
+  hmr["Patch HMR<br/>重读用户层"]
+  argv --> profile
+  profile --> patches
+  patches --> context
+  context --> mount
+  mount --> ready
+  ready -.-> hmr
+  hmr -->|事务性重组| mount

@@ -1,0 +1,18 @@
+flowchart LR
+  tools["模型可见工具<br/>FS / Shell / PTY"]
+  registry["Tool Registry<br/>pre / execute / post"]
+  policy["Sandbox Policy<br/>session mode + approval"]
+  seams["能力 Seams<br/>fs / subprocess / terminals"]
+  providers["Provider 选择<br/>composition-time binding"]
+  local["Local Providers<br/>FS + process + PTY"]
+  e2b["E2B Providers<br/>shared sandbox"]
+  host["Host OS Isolation<br/>native isolation"]
+  remote["Remote Linux World<br/>ephemeral runtime"]
+  tools --> registry
+  registry --> policy
+  policy --> seams
+  seams --> providers
+  providers --> local
+  providers -.-> e2b
+  local --> host
+  e2b --> remote

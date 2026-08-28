@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "工具执行与策略管线",
+    "locale": "zh-CN",
+    "output": "diagrams/05-tool-execution.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "policy",
+        "label": "策略判定",
+        "focus": [
+          "model",
+          "session",
+          "registry",
+          "policy",
+          "approval",
+          "guards"
+        ],
+        "note": "调用先记录，再经 pre waterfall、审批和单调 guard 判定。"
+      },
+      {
+        "id": "execution",
+        "label": "受控执行",
+        "focus": [
+          "registry",
+          "guards",
+          "tool",
+          "fs"
+        ],
+        "note": "timeout 等 around concern 包裹工具体，文件修改再经过 intent gate。"
+      },
+      {
+        "id": "result",
+        "label": "权威结果",
+        "focus": [
+          "tool",
+          "registry",
+          "session",
+          "ui"
+        ],
+        "note": "post、归一化和 finalize 完成后，冻结结果才进入日志与 UI。"
+      }
+    ],
+    "viewBox": [
+      1220,
+      620
+    ],
+    "column_fit": "spread"
+  },
+  "participants": [
+    {
+      "id": "model",
+      "type": "cloud",
+      "label": "LLM"
+    },
+    {
+      "id": "session",
+      "type": "database",
+      "label": "Session"
+    },
+    {
+      "id": "registry",
+      "type": "backend",
+      "label": "Tool Registry"
+    },
+    {
+      "id": "policy",
+      "type": "security",
+      "label": "Pre/Post Hooks"
+    },
+    {
+      "id": "approval",
+      "type": "external",
+      "label": "User Approval"
+    },
+    {
+      "id": "guards",
+      "type": "security",
+      "label": "Guards"
+    },
+    {
+      "id": "tool",
+      "type": "backend",
+      "label": "Tool Body"
+    },
+    {
+      "id": "fs",
+      "type": "security",
+      "label": "FS Intent Gate"
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "UI"
+    }
+  ],
+  "messages": [
+    {
+      "id": "model-call",
+      "from": "model",
+      "to": "registry",
+      "y": 160,
+      "label": "assistant tool-call block",
+      "variant": "emphasis"
+    },
+    {
+      "id": "record-call",
+      "from": "registry",
+      "to": "session",
+      "y": 188,
+      "label": "append tool/call"
+    },
+    {
+      "id": "pending-card",
+      "from": "session",
+      "to": "ui",
+      "y": 216,
+      "label": "presentCall(args)",
+      "variant": "dashed"
+    },
+    {
+      "id": "pre-hooks",
+      "from": "registry",
+      "to": "policy",
+      "y": 244,
+      "label": "tools/pre-execute waterfall",
+      "variant": "security"
+    },
+    {
+      "id": "ask",
+      "from": "policy",
+      "to": "approval",
+      "y": 272,
+      "label": "ask when required",
+      "variant": "security"
+    },
+    {
+      "id": "grant",
+      "from": "approval",
+      "to": "guards",
+      "y": 300,
+      "label": "allowed-once or deny",
+      "variant": "return"
+    },
+    {
+      "id": "guard-check",
+      "from": "policy",
+      "to": "guards",
+      "y": 328,
+      "label": "allow -> monotonic guards",
+      "variant": "security"
+    },
+    {
+      "id": "dispatch-tool",
+      "from": "guards",
+      "to": "tool",
+      "y": 356,
+      "label": "tools/execute wrapper",
+      "variant": "emphasis"
+    },
+    {
+      "id": "fs-intent",
+      "from": "tool",
+      "to": "fs",
+      "y": 384,
+      "label": "fs write/edit intent",
+      "variant": "security"
+    },
+    {
+      "id": "post-result",
+      "from": "tool",
+      "to": "policy",
+      "y": 412,
+      "label": "tools/post-execute",
+      "variant": "return"
+    },
+    {
+      "id": "finalize",
+      "from": "policy",
+      "to": "registry",
+      "y": 440,
+      "label": "normalize + finalizeContent",
+      "variant": "return"
+    },
+    {
+      "id": "record-result",
+      "from": "registry",
+      "to": "session",
+      "y": 468,
+      "label": "append frozen tool/result",
+      "variant": "emphasis"
+    },
+    {
+      "id": "completed-card",
+      "from": "session",
+      "to": "ui",
+      "y": 496,
+      "label": "presentResult(args, result)",
+      "variant": "return"
+    },
+    {
+      "id": "next-context",
+      "from": "session",
+      "to": "model",
+      "y": 524,
+      "label": "batch contexts enter next step",
+      "variant": "dashed"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/03-profile-boot.workflow.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/03-profile-boot.html",
+  "specification": {
+    "sha256": "89308eaf95f892207fa6c5bc92a4f6ae2bfcf1cea021f12a99aaffb9273a8458",
+    "bytes": 4187
+  },
+  "artifact": {
+    "sha256": "9e306bf8a907a6fef0f7fe9387908a5dbadad4dd039ff2b61aa12c1995f64a41",
+    "bytes": 708295
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

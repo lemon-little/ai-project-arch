@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/05-tool-execution.sequence.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/05-tool-execution.html",
+  "specification": {
+    "sha256": "bc6f974d9c73580a724ca4cd1156bcd719d12c4aa6adbed3926a4cf7360351c6",
+    "bytes": 4365
+  },
+  "artifact": {
+    "sha256": "4c8b97cf32e261dda90498b79e0fbfaab937afa80ec3a4d94a2b45c7c729f586",
+    "bytes": 714730
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

@@ -1,0 +1,206 @@
+{
+  "project": "deepseek-harness",
+  "source": {
+    "remote": "https://github.com/deepseek-ai/deepseek-harness.git",
+    "branch": "master",
+    "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+    "tags": [
+      "dsh-v0.1.2-alpha.1"
+    ],
+    "describe": "dsh-v0.1.2-alpha.1"
+  },
+  "diagrams": [
+    {
+      "id": "01-system-landscape",
+      "type": "architecture",
+      "title": "DeepSeek Harness 系统全景",
+      "description": "从用户入口、Profile 组合、Cordis 容器到 Agent、工具、执行环境与持久化的端到端全景。",
+      "html": "diagrams/01-system-landscape.html",
+      "specification": "diagrams/01-system-landscape.architecture.json",
+      "mermaid": "figures/01-system-landscape.mmd",
+      "png": "figures/01-system-landscape.png",
+      "evidence": [
+        "AGENTS.md",
+        "docs/architecture.md",
+        "packages/bundle/base/cordis.patch.yml",
+        "apps/cli/src/profile-boot.ts"
+      ]
+    },
+    {
+      "id": "02-module-atlas",
+      "type": "architecture",
+      "title": "Monorepo 模块全景",
+      "description": "把 packages 目录下 254 个包按职责归入 12 个架构域，覆盖所有一级包组。",
+      "html": "diagrams/02-module-atlas.html",
+      "specification": "diagrams/02-module-atlas.architecture.json",
+      "mermaid": "figures/02-module-atlas.mmd",
+      "png": "figures/02-module-atlas.png",
+      "evidence": [
+        "AGENTS.md",
+        "packages/README.md",
+        "docs/module-graph.md",
+        "pnpm-workspace.yaml"
+      ]
+    },
+    {
+      "id": "03-profile-boot",
+      "type": "workflow",
+      "title": "Profile 启动与热重载流程",
+      "description": "dsh 入口如何解析 Profile、叠加 bundle/user/CLI patch，并启动可热重载的 Cordis 插件树。",
+      "html": "diagrams/03-profile-boot.html",
+      "specification": "diagrams/03-profile-boot.workflow.json",
+      "mermaid": "figures/03-profile-boot.mmd",
+      "png": "figures/03-profile-boot.png",
+      "evidence": [
+        "apps/cli/src/bin.ts",
+        "apps/cli/src/args.ts",
+        "apps/cli/src/profile-boot.ts",
+        "packages/boot/app-boot/src/index.ts"
+      ]
+    },
+    {
+      "id": "04-agent-turn",
+      "type": "sequence",
+      "title": "Agent Turn 与 Step 时序",
+      "description": "用户输入进入队列后，Agent 如何组装 prompt、流式调用 LLM、执行工具并写入可回放会话事件。",
+      "html": "diagrams/04-agent-turn.html",
+      "specification": "diagrams/04-agent-turn.sequence.json",
+      "mermaid": "figures/04-agent-turn.mmd",
+      "png": "figures/04-agent-turn.png",
+      "evidence": [
+        "docs/agent-lifecycle.md",
+        "packages/core/agent/src/index.ts",
+        "packages/core/agent-loop/src/index.ts",
+        "packages/core/session/src/index.ts"
+      ]
+    },
+    {
+      "id": "05-tool-execution",
+      "type": "sequence",
+      "title": "工具执行与策略管线",
+      "description": "工具调用从持久化、权限审批、单调 guard、沙箱执行到结果冻结和 UI 呈现的完整数据流。",
+      "html": "diagrams/05-tool-execution.html",
+      "specification": "diagrams/05-tool-execution.sequence.json",
+      "mermaid": "figures/05-tool-execution.mmd",
+      "png": "figures/05-tool-execution.png",
+      "evidence": [
+        "docs/tool-execution-pipeline.md",
+        "packages/core/tools/src/index.ts",
+        "packages/interaction/user-approval/src/index.ts",
+        "packages/guard/timeout-policy/src/index.ts"
+      ]
+    },
+    {
+      "id": "06-web-control-plane",
+      "type": "sequence",
+      "title": "Web 控制面启动与请求链路",
+      "description": "浏览器插件图、Connection、WebServer、Typert Gateway 与业务 Controller 之间的请求和事件路径。",
+      "html": "diagrams/06-web-control-plane.html",
+      "specification": "diagrams/06-web-control-plane.sequence.json",
+      "mermaid": "figures/06-web-control-plane.mmd",
+      "png": "figures/06-web-control-plane.png",
+      "evidence": [
+        "packages/bundle/web-app/cordis.patch.yml",
+        "packages/client/modules/src/index.ts",
+        "packages/client/connection/src/index.ts",
+        "packages/api/gateway/src/index.ts"
+      ]
+    },
+    {
+      "id": "07-session-persistence",
+      "type": "dataflow",
+      "title": "会话事件、投影与查询数据流",
+      "description": "会话事件如何成为 append-only 事实，经 JSONL/SQLite 持久化、投影缓存、查询和遥测供不同消费者使用。",
+      "html": "diagrams/07-session-persistence.html",
+      "specification": "diagrams/07-session-persistence.dataflow.json",
+      "mermaid": "figures/07-session-persistence.mmd",
+      "png": "figures/07-session-persistence.png",
+      "evidence": [
+        "docs/persistence-catalog.md",
+        "packages/core/session/src/index.ts",
+        "packages/session/session-persistence/src/index.ts",
+        "packages/session/session-projection/src/index.ts"
+      ]
+    },
+    {
+      "id": "08-subagent-orchestration",
+      "type": "workflow",
+      "title": "子代理委派与续接流程",
+      "description": "父 Agent 如何选择模型和 provider，spawn/fork 子 Agent，并通过报告、控制与 continuation 回收结果。",
+      "html": "diagrams/08-subagent-orchestration.html",
+      "specification": "diagrams/08-subagent-orchestration.workflow.json",
+      "mermaid": "figures/08-subagent-orchestration.mmd",
+      "png": "figures/08-subagent-orchestration.png",
+      "evidence": [
+        "packages/subagent/subagent/src/index.ts",
+        "packages/subagent/tool-subagent/src/index.ts",
+        "packages/subagent/subagent-spawn-in-process/src/index.ts",
+        "packages/subagent/subagent-fork-in-process/src/index.ts"
+      ]
+    },
+    {
+      "id": "09-execution-sandbox",
+      "type": "architecture",
+      "title": "执行、文件系统与沙箱架构",
+      "description": "文件、Shell、Terminal 如何通过稳定 seam 选择本地或 E2B provider，并由跨平台沙箱策略约束副作用。",
+      "html": "diagrams/09-execution-sandbox.html",
+      "specification": "diagrams/09-execution-sandbox.architecture.json",
+      "mermaid": "figures/09-execution-sandbox.mmd",
+      "png": "figures/09-execution-sandbox.png",
+      "evidence": [
+        "packages/sandbox/sandbox-local/src/index.ts",
+        "packages/sandbox/sandbox-local/src/profiles.ts",
+        "packages/fs/fs-sandbox/src/index.ts",
+        "packages/e2b/e2b/README.md"
+      ]
+    },
+    {
+      "id": "10-remote-api",
+      "type": "sequence",
+      "title": "Typert Remote API 调用时序",
+      "description": "从 @Remote 声明和生成契约到浏览器调用、Host lookup、业务执行、响应校验与取消的严格链路。",
+      "html": "diagrams/10-remote-api.html",
+      "specification": "diagrams/10-remote-api.sequence.json",
+      "mermaid": "figures/10-remote-api.mmd",
+      "png": "figures/10-remote-api.png",
+      "evidence": [
+        "docs/api-gateway.md",
+        "packages/typert/generator/src/index.ts",
+        "packages/api/gateway/src/index.ts",
+        "packages/client/connection/src/index.ts"
+      ]
+    },
+    {
+      "id": "11-build-and-release",
+      "type": "dataflow",
+      "title": "构建、契约生成与发布流水线",
+      "description": "Host/Client 分阶段构建、Typert 代码生成、Web 打包、质量门禁与多语言/多运行时发布产物。",
+      "html": "diagrams/11-build-and-release.html",
+      "specification": "diagrams/11-build-and-release.dataflow.json",
+      "mermaid": "figures/11-build-and-release.mmd",
+      "png": "figures/11-build-and-release.png",
+      "evidence": [
+        "package.json",
+        "tsdown.config.ts",
+        "docs/api-gateway.md",
+        "scripts/build.ts"
+      ]
+    },
+    {
+      "id": "12-agent-state-lifecycle",
+      "type": "lifecycle",
+      "title": "Agent 运行状态生命周期",
+      "description": "Agent 从 idle、排队、Turn/Step 执行到工具等待、重试、停止或失败的状态转换。",
+      "html": "diagrams/12-agent-state-lifecycle.html",
+      "specification": "diagrams/12-agent-state-lifecycle.lifecycle.json",
+      "mermaid": "figures/12-agent-state-lifecycle.mmd",
+      "png": "figures/12-agent-state-lifecycle.png",
+      "evidence": [
+        "docs/agent-lifecycle.md",
+        "packages/core/agent/src/index.ts",
+        "packages/core/agent-loop/src/index.ts",
+        "packages/compaction/compaction-basic/src/index.ts"
+      ]
+    }
+  ]
+}

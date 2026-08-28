@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "Web 控制面启动与请求链路",
+    "locale": "zh-CN",
+    "output": "diagrams/06-web-control-plane.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "browser-boot",
+        "label": "浏览器启动",
+        "focus": [
+          "browser",
+          "modules",
+          "connection"
+        ],
+        "note": "Host 扫描 dsh.client 插件并将启动清单交给浏览器内核。"
+      },
+      {
+        "id": "remote-call",
+        "label": "Remote 调用",
+        "focus": [
+          "ui",
+          "connection",
+          "webserver",
+          "gateway",
+          "controller"
+        ],
+        "note": "统一信任检查之后，Gateway 校验描述符并调用实时业务服务。"
+      },
+      {
+        "id": "live-events",
+        "label": "实时事件",
+        "focus": [
+          "agent",
+          "gateway",
+          "connection",
+          "ui"
+        ],
+        "note": "Session 和 Remote 事件通过 Connection 的流式通道回到界面。"
+      }
+    ],
+    "viewBox": [
+      1180,
+      620
+    ],
+    "column_fit": "spread"
+  },
+  "participants": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Browser"
+    },
+    {
+      "id": "modules",
+      "type": "frontend",
+      "label": "Client Modules"
+    },
+    {
+      "id": "ui",
+      "type": "frontend",
+      "label": "UI Plugin"
+    },
+    {
+      "id": "connection",
+      "type": "security",
+      "label": "Connection"
+    },
+    {
+      "id": "webserver",
+      "type": "cloud",
+      "label": "WebServer"
+    },
+    {
+      "id": "gateway",
+      "type": "security",
+      "label": "Typert Gateway"
+    },
+    {
+      "id": "controller",
+      "type": "backend",
+      "label": "API Controller"
+    },
+    {
+      "id": "agent",
+      "type": "database",
+      "label": "Agent / Session"
+    }
+  ],
+  "messages": [
+    {
+      "id": "open",
+      "from": "browser",
+      "to": "modules",
+      "y": 160,
+      "label": "GET /",
+      "variant": "emphasis"
+    },
+    {
+      "id": "boot-manifest",
+      "from": "modules",
+      "to": "browser",
+      "y": 188,
+      "label": "window.__DSH_BOOT__",
+      "variant": "return"
+    },
+    {
+      "id": "load-client",
+      "from": "browser",
+      "to": "modules",
+      "y": 216,
+      "label": "GET /plugins/<id>/client.js"
+    },
+    {
+      "id": "adopt-ui",
+      "from": "modules",
+      "to": "ui",
+      "y": 244,
+      "label": "构造 Client Cordis 图"
+    },
+    {
+      "id": "invoke",
+      "from": "ui",
+      "to": "connection",
+      "y": 272,
+      "label": "ctx.remote.<ns>.<method>()",
+      "variant": "emphasis"
+    },
+    {
+      "id": "post-api",
+      "from": "connection",
+      "to": "webserver",
+      "y": 300,
+      "label": "POST /api/<ns>/<method>",
+      "variant": "security"
+    },
+    {
+      "id": "route",
+      "from": "webserver",
+      "to": "gateway",
+      "y": 328,
+      "label": "FetchHandler dispatch"
+    },
+    {
+      "id": "resolve",
+      "from": "gateway",
+      "to": "controller",
+      "y": 356,
+      "label": "validate + lookup + invoke",
+      "variant": "security"
+    },
+    {
+      "id": "business",
+      "from": "controller",
+      "to": "agent",
+      "y": 384,
+      "label": "控制 Agent / Session"
+    },
+    {
+      "id": "result",
+      "from": "agent",
+      "to": "ui",
+      "y": 412,
+      "label": "typed result envelope",
+      "variant": "return"
+    },
+    {
+      "id": "event-source",
+      "from": "agent",
+      "to": "gateway",
+      "y": 440,
+      "label": "session / Remote events",
+      "variant": "dashed"
+    },
+    {
+      "id": "sse",
+      "from": "gateway",
+      "to": "connection",
+      "y": 468,
+      "label": "event stream frames",
+      "variant": "dashed"
+    },
+    {
+      "id": "render-event",
+      "from": "connection",
+      "to": "ui",
+      "y": 496,
+      "label": "projection + render",
+      "variant": "return"
+    },
+    {
+      "id": "cancel",
+      "from": "ui",
+      "to": "gateway",
+      "y": 524,
+      "label": "AbortSignal / cancellation",
+      "variant": "security"
+    }
+  ]
+}

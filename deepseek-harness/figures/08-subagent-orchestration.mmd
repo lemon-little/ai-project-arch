@@ -1,0 +1,14 @@
+flowchart LR
+  delegate["委派任务<br/>spawn / fork"]
+  model["解析模型<br/>setting + request"]
+  route["选择 Provider<br/>local / SDK / ACP"]
+  create["创建 Child<br/>new or forked context"]
+  run["执行子任务<br/>standard Agent Loop"]
+  report["结构化报告<br/>final output"]
+  continue["父 Agent 接收<br/>result + agent id"]
+  delegate --> model
+  model --> route
+  route --> create
+  create --> run
+  run --> report
+  report -->|report| continue

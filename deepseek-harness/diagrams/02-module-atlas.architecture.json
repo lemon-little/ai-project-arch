@@ -1,0 +1,494 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "DeepSeek Harness Monorepo 模块全景",
+    "locale": "zh-CN",
+    "output": "diagrams/02-module-atlas.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "runtime-spine",
+        "label": "运行时主干",
+        "focus": [
+          "surfaces",
+          "composition",
+          "core",
+          "providers"
+        ],
+        "note": "从产品入口到插件组合、Agent 主干与能力实现。"
+      },
+      {
+        "id": "extension-plane",
+        "label": "扩展平面",
+        "focus": [
+          "interfaces",
+          "capabilities",
+          "execution",
+          "orchestration"
+        ],
+        "note": "接口、工具能力、执行后端与多 Agent 编排彼此解耦。"
+      },
+      {
+        "id": "foundation-plane",
+        "label": "基础平面",
+        "focus": [
+          "state",
+          "policy",
+          "platform",
+          "delivery"
+        ],
+        "note": "状态、策略、跨平台基础与工程交付支撑上层运行时。"
+      }
+    ],
+    "viewBox": [
+      1260,
+      760
+    ],
+    "repository": {
+      "url": "https://github.com/deepseek-ai/deepseek-harness",
+      "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc"
+    }
+  },
+  "components": [
+    {
+      "id": "surfaces",
+      "type": "frontend",
+      "label": "产品表面",
+      "sublabel": "apps / client / host",
+      "pos": [
+        35,
+        120
+      ],
+      "size": [
+        190,
+        72
+      ],
+      "sources": [
+        {
+          "path": "apps/cli/package.json"
+        },
+        {
+          "path": "packages/client/connection/package.json"
+        },
+        {
+          "path": "packages/host/webserver/package.json"
+        }
+      ]
+    },
+    {
+      "id": "composition",
+      "type": "cloud",
+      "label": "组合与启动",
+      "sublabel": "boot / bundle / preset / extensions",
+      "pos": [
+        355,
+        120
+      ],
+      "size": [
+        210,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/boot/app-boot/package.json"
+        },
+        {
+          "path": "packages/bundle/base/package.json"
+        },
+        {
+          "path": "packages/preset/agent-presets/package.json"
+        }
+      ]
+    },
+    {
+      "id": "core",
+      "type": "backend",
+      "label": "Agent 核心",
+      "sublabel": "core / llm / context / compaction",
+      "pos": [
+        675,
+        120
+      ],
+      "size": [
+        210,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/core/agent/package.json"
+        },
+        {
+          "path": "packages/llm/llm/package.json"
+        },
+        {
+          "path": "packages/compaction/compaction/package.json"
+        }
+      ]
+    },
+    {
+      "id": "providers",
+      "type": "external",
+      "label": "外部能力提供者",
+      "sublabel": "web / llm / mcp / e2b",
+      "pos": [
+        1010,
+        120
+      ],
+      "size": [
+        205,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/web/web/package.json"
+        },
+        {
+          "path": "packages/mcp/mcp-client/package.json"
+        },
+        {
+          "path": "packages/e2b/e2b/package.json"
+        }
+      ]
+    },
+    {
+      "id": "interfaces",
+      "type": "security",
+      "label": "协议与接口",
+      "sublabel": "api / typert / sdk / acp / hooks",
+      "pos": [
+        35,
+        320
+      ],
+      "size": [
+        205,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/api/gateway/package.json"
+        },
+        {
+          "path": "packages/typert/protocol/package.json"
+        },
+        {
+          "path": "packages/sdk/protocol/package.json"
+        }
+      ]
+    },
+    {
+      "id": "capabilities",
+      "type": "messagebus",
+      "label": "工具能力",
+      "sublabel": "fs / shell / terminal / lsp / skill",
+      "pos": [
+        355,
+        320
+      ],
+      "size": [
+        210,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/fs/fs/package.json"
+        },
+        {
+          "path": "packages/shell/shell/package.json"
+        },
+        {
+          "path": "packages/skill/skill/package.json"
+        }
+      ]
+    },
+    {
+      "id": "execution",
+      "type": "security",
+      "label": "执行与隔离",
+      "sublabel": "sandbox / subprocess / code-runtime",
+      "pos": [
+        675,
+        320
+      ],
+      "size": [
+        210,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/sandbox/sandbox/package.json"
+        },
+        {
+          "path": "packages/subprocess/subprocess/package.json"
+        },
+        {
+          "path": "packages/code-runtime/code-runtime/package.json"
+        }
+      ]
+    },
+    {
+      "id": "orchestration",
+      "type": "cloud",
+      "label": "编排与后台任务",
+      "sublabel": "subagent / workflow / jobs / schedule",
+      "pos": [
+        1010,
+        320
+      ],
+      "size": [
+        205,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/subagent/subagent/package.json"
+        },
+        {
+          "path": "packages/workflow/workflow/package.json"
+        },
+        {
+          "path": "packages/jobs/jobs/package.json"
+        }
+      ]
+    },
+    {
+      "id": "state",
+      "type": "database",
+      "label": "状态与数据",
+      "sublabel": "session / query / storage / spill",
+      "pos": [
+        35,
+        520
+      ],
+      "size": [
+        205,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/session/session-persistence/package.json"
+        },
+        {
+          "path": "packages/session-query/session-query/package.json"
+        },
+        {
+          "path": "packages/storage/storage/package.json"
+        }
+      ]
+    },
+    {
+      "id": "policy",
+      "type": "security",
+      "label": "策略与交互",
+      "sublabel": "interaction / guard / credentials",
+      "pos": [
+        355,
+        520
+      ],
+      "size": [
+        210,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/interaction/user-approval/package.json"
+        },
+        {
+          "path": "packages/guard/timeout-policy/package.json"
+        },
+        {
+          "path": "packages/credentials/credentials/package.json"
+        }
+      ]
+    },
+    {
+      "id": "platform",
+      "type": "backend",
+      "label": "平台基础",
+      "sublabel": "util / identity / attachment / workspace",
+      "pos": [
+        675,
+        520
+      ],
+      "size": [
+        210,
+        72
+      ],
+      "sources": [
+        {
+          "path": "packages/util/atomic-write/package.json"
+        },
+        {
+          "path": "packages/identity/anonymous-user-id/package.json"
+        },
+        {
+          "path": "packages/workspace/workspace/package.json"
+        }
+      ]
+    },
+    {
+      "id": "delivery",
+      "type": "external",
+      "label": "工程与发布",
+      "sublabel": "scripts / test-support / python / native",
+      "pos": [
+        1010,
+        520
+      ],
+      "size": [
+        205,
+        72
+      ],
+      "sources": [
+        {
+          "path": "scripts/build.ts"
+        },
+        {
+          "path": "packages/test-support/agent-loop-testkit/package.json"
+        },
+        {
+          "path": "python/sdk/pyproject.toml"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "surface-compose",
+      "from": "surfaces",
+      "to": "composition",
+      "label": "选择 Profile"
+    },
+    {
+      "id": "compose-core",
+      "from": "composition",
+      "to": "core",
+      "label": "挂载插件树",
+      "variant": "emphasis"
+    },
+    {
+      "id": "core-provider",
+      "from": "core",
+      "to": "providers",
+      "label": "调用 provider"
+    },
+    {
+      "id": "interface-capability",
+      "from": "interfaces",
+      "to": "capabilities",
+      "label": "暴露能力"
+    },
+    {
+      "id": "capability-execution",
+      "from": "capabilities",
+      "to": "execution",
+      "label": "委托执行",
+      "variant": "security"
+    },
+    {
+      "id": "execution-orchestration",
+      "from": "execution",
+      "to": "orchestration",
+      "label": "支撑 worker"
+    },
+    {
+      "id": "state-policy",
+      "from": "state",
+      "to": "policy",
+      "label": "持久化决策"
+    },
+    {
+      "id": "policy-platform",
+      "from": "policy",
+      "to": "platform",
+      "label": "约束实现",
+      "variant": "security"
+    },
+    {
+      "id": "platform-delivery",
+      "from": "platform",
+      "to": "delivery",
+      "label": "构建验证"
+    },
+    {
+      "id": "surfaces-interfaces",
+      "from": "surfaces",
+      "to": "interfaces",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "composition-capabilities",
+      "from": "composition",
+      "to": "capabilities",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "core-execution",
+      "from": "core",
+      "to": "execution",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "providers-orchestration",
+      "from": "providers",
+      "to": "orchestration",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "interfaces-state",
+      "from": "interfaces",
+      "to": "state",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "dashed"
+    },
+    {
+      "id": "capabilities-policy",
+      "from": "capabilities",
+      "to": "policy",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "dashed"
+    },
+    {
+      "id": "execution-platform",
+      "from": "execution",
+      "to": "platform",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "dashed"
+    },
+    {
+      "id": "orchestration-delivery",
+      "from": "orchestration",
+      "to": "delivery",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "覆盖范围",
+      "items": [
+        "12 个架构域覆盖 packages 下全部一级分组",
+        "apps、python、native、scripts 与 vendor 单独纳入",
+        "叶子包详情保留在仓库生成目录与图集索引中"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "阅读方法",
+      "items": [
+        "横向看每层内部责任链",
+        "纵向看表面、能力和基础设施依赖",
+        "用 HTML 搜索定位具体域或包名"
+      ]
+    }
+  ]
+}

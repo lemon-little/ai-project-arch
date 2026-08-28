@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "sequence",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/10-remote-api.sequence.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/10-remote-api.html",
+  "specification": {
+    "sha256": "8278e3ac28e7819f061fd34e6726dc7e5ab8d2db919758d9c32b9f61d361c40e",
+    "bytes": 4549
+  },
+  "artifact": {
+    "sha256": "77231db596176083656e41d2c2fddae7d1d7f54efc3431b4bd9f7826249a2699",
+    "bytes": 715134
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}

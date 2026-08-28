@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/02-module-atlas.architecture.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/02-module-atlas.html",
+  "specification": {
+    "sha256": "33cd4e749648f4668b7691c28da749d0eee9c5f593a41560a274ecf761dc42a2",
+    "bytes": 10622
+  },
+  "artifact": {
+    "sha256": "f55bba3f5b4f3dfa69093b0f419de523fc952986f8e8e717202dee15e8762c3b",
+    "bytes": 728325
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "evidence": {
+    "verified": true,
+    "repository": "https://github.com/deepseek-ai/deepseek-harness",
+    "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+    "references": 36
+  }
+}

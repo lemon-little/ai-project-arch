@@ -1,0 +1,10 @@
+flowchart LR
+  source["Workspace 源码<br/>TS / TSX / YAML"]
+  hostTsc["Host Build<br/>tsc + tsdown"]
+  contracts["Typert Artifacts<br/>host + remote-client"]
+  clientTsc["Client + Web Build<br/>tsc + tsdown + Vite"]
+  artifacts["验证后发布<br/>npm / dsh / Python"]
+  source -->|project refs| hostTsc
+  hostTsc -->|Typert generator| contracts
+  contracts -->|generated DTS| clientTsc
+  clientTsc -->|repository gates| artifacts

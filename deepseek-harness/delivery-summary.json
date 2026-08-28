@@ -1,0 +1,349 @@
+{
+  "generated_at": "2026-08-28T05:41:20.817Z",
+  "source_revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+  "visual_check_run": true,
+  "diagrams": [
+    {
+      "id": "01-system-landscape",
+      "type": "architecture",
+      "html": "diagrams/01-system-landscape.html",
+      "receipt": "diagrams/01-system-landscape.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/01-system-landscape.architecture.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/01-system-landscape.html",
+      "specification": {
+        "sha256": "c18b189724e1e445870a989c744d750970b72b2aac1d1702ae4a0c4595c19a04",
+        "bytes": 9040
+      },
+      "artifact": {
+        "sha256": "a990608c9d3bc0b93776de583333637f2e2c332586c6961923d637aab5c3a8c3",
+        "bytes": 724198
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      },
+      "evidence": {
+        "verified": true,
+        "repository": "https://github.com/deepseek-ai/deepseek-harness",
+        "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+        "references": 23
+      }
+    },
+    {
+      "id": "02-module-atlas",
+      "type": "architecture",
+      "html": "diagrams/02-module-atlas.html",
+      "receipt": "diagrams/02-module-atlas.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/02-module-atlas.architecture.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/02-module-atlas.html",
+      "specification": {
+        "sha256": "33cd4e749648f4668b7691c28da749d0eee9c5f593a41560a274ecf761dc42a2",
+        "bytes": 10622
+      },
+      "artifact": {
+        "sha256": "f55bba3f5b4f3dfa69093b0f419de523fc952986f8e8e717202dee15e8762c3b",
+        "bytes": 728325
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      },
+      "evidence": {
+        "verified": true,
+        "repository": "https://github.com/deepseek-ai/deepseek-harness",
+        "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+        "references": 36
+      }
+    },
+    {
+      "id": "03-profile-boot",
+      "type": "workflow",
+      "html": "diagrams/03-profile-boot.html",
+      "receipt": "diagrams/03-profile-boot.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/03-profile-boot.workflow.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/03-profile-boot.html",
+      "specification": {
+        "sha256": "89308eaf95f892207fa6c5bc92a4f6ae2bfcf1cea021f12a99aaffb9273a8458",
+        "bytes": 4187
+      },
+      "artifact": {
+        "sha256": "9e306bf8a907a6fef0f7fe9387908a5dbadad4dd039ff2b61aa12c1995f64a41",
+        "bytes": 708295
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "04-agent-turn",
+      "type": "sequence",
+      "html": "diagrams/04-agent-turn.html",
+      "receipt": "diagrams/04-agent-turn.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/04-agent-turn.sequence.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/04-agent-turn.html",
+      "specification": {
+        "sha256": "74ec8218ce15dc4d8e1b88aeb4b2697f47cbd7cb89f92b66134e19a51bbdc6eb",
+        "bytes": 4635
+      },
+      "artifact": {
+        "sha256": "e08e59ab37ddac1791abd9e15c6e8a3f47aa70c2f315f25598095fa34cd5a703",
+        "bytes": 716672
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "05-tool-execution",
+      "type": "sequence",
+      "html": "diagrams/05-tool-execution.html",
+      "receipt": "diagrams/05-tool-execution.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/05-tool-execution.sequence.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/05-tool-execution.html",
+      "specification": {
+        "sha256": "bc6f974d9c73580a724ca4cd1156bcd719d12c4aa6adbed3926a4cf7360351c6",
+        "bytes": 4365
+      },
+      "artifact": {
+        "sha256": "4c8b97cf32e261dda90498b79e0fbfaab937afa80ec3a4d94a2b45c7c729f586",
+        "bytes": 714730
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "06-web-control-plane",
+      "type": "sequence",
+      "html": "diagrams/06-web-control-plane.html",
+      "receipt": "diagrams/06-web-control-plane.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/06-web-control-plane.sequence.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/06-web-control-plane.html",
+      "specification": {
+        "sha256": "efe10d1292a1b369617b0c78c8dbad4aa04137e93af60c705825f6c9c0d60170",
+        "bytes": 4200
+      },
+      "artifact": {
+        "sha256": "2e5d07ee3a6559dae86f94582fb6a4cbf12991d103199869ffc2e8193f2dcaf3",
+        "bytes": 715401
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "07-session-persistence",
+      "type": "dataflow",
+      "html": "diagrams/07-session-persistence.html",
+      "receipt": "diagrams/07-session-persistence.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/07-session-persistence.dataflow.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/07-session-persistence.html",
+      "specification": {
+        "sha256": "c30aecc72cd1cbfb0e62fe71751b673acdf8dc24566d7dd1faa257830e913d4c",
+        "bytes": 4433
+      },
+      "artifact": {
+        "sha256": "51fe15c1d400b5c5673ec15412f7b03e4d8ee7c95ccf4ed14a863219ce80225d",
+        "bytes": 713265
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "08-subagent-orchestration",
+      "type": "workflow",
+      "html": "diagrams/08-subagent-orchestration.html",
+      "receipt": "diagrams/08-subagent-orchestration.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/08-subagent-orchestration.workflow.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/08-subagent-orchestration.html",
+      "specification": {
+        "sha256": "2c3536c1dacdbacfef3f9932f57d28f968df15d3e8de26868d86db99a4d959cd",
+        "bytes": 3977
+      },
+      "artifact": {
+        "sha256": "e6462d0b95009a33c1c94fd128e32f745fc0c105548d0000c2a8a3ae845596cc",
+        "bytes": 708726
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "09-execution-sandbox",
+      "type": "architecture",
+      "html": "diagrams/09-execution-sandbox.html",
+      "receipt": "diagrams/09-execution-sandbox.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/09-execution-sandbox.architecture.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/09-execution-sandbox.html",
+      "specification": {
+        "sha256": "3f66afe80da3bf96e90b2c35beb592e541d2fc5679309799070a4f90fd23a12e",
+        "bytes": 6639
+      },
+      "artifact": {
+        "sha256": "1f6bc161afb84b97849f3259c906be27898c9d8f0eb2c2df3daf68a714b7caec",
+        "bytes": 714017
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      },
+      "evidence": {
+        "verified": true,
+        "repository": "https://github.com/deepseek-ai/deepseek-harness",
+        "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+        "references": 19
+      }
+    },
+    {
+      "id": "10-remote-api",
+      "type": "sequence",
+      "html": "diagrams/10-remote-api.html",
+      "receipt": "diagrams/10-remote-api.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/10-remote-api.sequence.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/10-remote-api.html",
+      "specification": {
+        "sha256": "8278e3ac28e7819f061fd34e6726dc7e5ab8d2db919758d9c32b9f61d361c40e",
+        "bytes": 4549
+      },
+      "artifact": {
+        "sha256": "77231db596176083656e41d2c2fddae7d1d7f54efc3431b4bd9f7826249a2699",
+        "bytes": 715134
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "11-build-and-release",
+      "type": "dataflow",
+      "html": "diagrams/11-build-and-release.html",
+      "receipt": "diagrams/11-build-and-release.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/11-build-and-release.dataflow.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/11-build-and-release.html",
+      "specification": {
+        "sha256": "92be6383d15447ddd1b6856d5b06827bdf11ebdc2c420c4baece623d0cd1cc83",
+        "bytes": 3617
+      },
+      "artifact": {
+        "sha256": "afbdd1ed044efd504d7d936f61f3eb1813cd3fdf5fc3a53ebb29876331539f70",
+        "bytes": 707344
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      }
+    },
+    {
+      "id": "12-agent-state-lifecycle",
+      "type": "lifecycle",
+      "html": "diagrams/12-agent-state-lifecycle.html",
+      "receipt": "diagrams/12-agent-state-lifecycle.delivery.json",
+      "schemaVersion": 1,
+      "ok": true,
+      "command": "deliver",
+      "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/12-agent-state-lifecycle.lifecycle.json",
+      "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/12-agent-state-lifecycle.html",
+      "specification": {
+        "sha256": "71c2616cf8f149ee0cf576bd03bb99dbd91fd1ab30612a599ef623e817b3ad4c",
+        "bytes": 4756
+      },
+      "artifact": {
+        "sha256": "4f6ab6cd2b224c22bf99a72042075d4289ee535b97ec99f0f123a6b5bc892e1c",
+        "bytes": 713385
+      },
+      "validation": {
+        "checksPassed": 9,
+        "checkCount": 9,
+        "compositionProfile": "showcase",
+        "compositionStatus": "pass",
+        "errors": 0,
+        "warnings": 0
+      }
+    }
+  ]
+}

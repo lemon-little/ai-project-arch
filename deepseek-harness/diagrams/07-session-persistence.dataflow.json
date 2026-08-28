@@ -1,0 +1,204 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "会话事件、投影与查询数据流",
+    "locale": "zh-CN",
+    "output": "diagrams/07-session-persistence.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "write-path",
+        "label": "事件写入",
+        "focus": [
+          "agentEvents",
+          "ownedEvents",
+          "session"
+        ],
+        "note": "核心事件和功能包自有事件进入同一个 append-only Session。"
+      },
+      {
+        "id": "durability",
+        "label": "持久化路径",
+        "focus": [
+          "session",
+          "persistence",
+          "query"
+        ],
+        "note": "Persistence seam 将顺序事件交给 JSONL 或 SQLite provider。"
+      },
+      {
+        "id": "derived-reads",
+        "label": "派生读取",
+        "focus": [
+          "session",
+          "projection",
+          "cache",
+          "query",
+          "consumers"
+        ],
+        "note": "Projection 和 Query 提供可重建读模型，消费者不改写历史。"
+      }
+    ],
+    "viewBox": [
+      1080,
+      540
+    ]
+  },
+  "stages": [
+    {
+      "label": "事件生产者"
+    },
+    {
+      "label": "内存事实"
+    },
+    {
+      "label": "写入或折叠"
+    },
+    {
+      "label": "存储与读取"
+    },
+    {
+      "label": "消费者"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "agentEvents",
+      "type": "backend",
+      "label": "Agent Loop 事件",
+      "sublabel": "turn / step / tool",
+      "stage": 0,
+      "row": 0
+    },
+    {
+      "id": "ownedEvents",
+      "type": "messagebus",
+      "label": "功能包事件",
+      "sublabel": "goal / approval / workflow",
+      "stage": 0,
+      "row": 2,
+      "width": 128
+    },
+    {
+      "id": "session",
+      "type": "database",
+      "label": "Session Event Log",
+      "sublabel": "monotonic seq + append-only",
+      "stage": 1,
+      "row": 1,
+      "tag": "source of truth",
+      "width": 132
+    },
+    {
+      "id": "persistence",
+      "type": "security",
+      "label": "Persistence Providers",
+      "sublabel": "JSONL / SQLite",
+      "stage": 2,
+      "row": 0,
+      "width": 132
+    },
+    {
+      "id": "projection",
+      "type": "backend",
+      "label": "Projection Registry",
+      "sublabel": "deterministic fold",
+      "stage": 2,
+      "row": 2,
+      "width": 122
+    },
+    {
+      "id": "query",
+      "type": "backend",
+      "label": "Session Query",
+      "sublabel": "reads / traces / search",
+      "stage": 3,
+      "row": 0,
+      "width": 118
+    },
+    {
+      "id": "cache",
+      "type": "database",
+      "label": "Projection Cache",
+      "sublabel": "rebuildable",
+      "stage": 3,
+      "row": 2,
+      "width": 112
+    },
+    {
+      "id": "consumers",
+      "type": "frontend",
+      "label": "Web / SDK / Export",
+      "sublabel": "replay / list / search",
+      "stage": 4,
+      "row": 1,
+      "width": 128
+    }
+  ],
+  "flows": [
+    {
+      "id": "agent-session",
+      "from": "agentEvents",
+      "to": "session",
+      "label": "append",
+      "classification": "durable event",
+      "variant": "emphasis"
+    },
+    {
+      "id": "owned-session",
+      "from": "ownedEvents",
+      "to": "session",
+      "label": "append",
+      "classification": "package event"
+    },
+    {
+      "id": "session-persistence",
+      "from": "session",
+      "to": "persistence",
+      "label": "ordered batch",
+      "classification": "event records",
+      "variant": "emphasis"
+    },
+    {
+      "id": "session-projection",
+      "from": "session",
+      "to": "projection",
+      "label": "fold",
+      "classification": "event records"
+    },
+    {
+      "id": "persist-query",
+      "from": "persistence",
+      "to": "query",
+      "label": "cold reads",
+      "classification": "versioned storage",
+      "labelAt": [
+        641,
+        200
+      ]
+    },
+    {
+      "id": "projection-cache",
+      "from": "projection",
+      "to": "cache",
+      "label": "cache snapshot",
+      "classification": "derived state"
+    },
+    {
+      "id": "query-consumers",
+      "from": "query",
+      "to": "consumers",
+      "label": "query result",
+      "classification": "typed read",
+      "variant": "emphasis"
+    },
+    {
+      "id": "cache-consumers",
+      "from": "cache",
+      "to": "consumers",
+      "label": "projection",
+      "classification": "UI read model"
+    }
+  ]
+}

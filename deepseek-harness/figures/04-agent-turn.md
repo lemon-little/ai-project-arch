@@ -1,0 +1,33 @@
+# Agent Turn 与 Step 时序
+
+用户输入进入队列后，Agent 如何组装 prompt、流式调用 LLM、执行工具并写入可回放会话事件。
+
+```mermaid
+sequenceDiagram
+  participant user as 用户
+  participant agent as Agent Registry
+  participant driver as Agent Loop
+  participant hooks as Hooks
+  participant prompt as System Prompt
+  participant llm as LLM Provider
+  participant tools as Tools
+  participant session as Session
+  participant sdk as UI / SDK
+  user->>agent: followup(content)
+  agent-->>sdk: agent/inbox/inserted
+  agent->>driver: queued work wakes driver
+  driver->>session: turn/start
+  driver->>hooks: agent/pre-step waterfall
+  driver->>session: step/start + user/message
+  driver->>prompt: system-prompt/assemble
+  driver->>llm: agent/request -> llm/stream
+  llm-->>driver: StreamChunk*
+  driver-->>session: assistant/chunk*
+  driver->>session: assistant/message
+  driver->>tools: ordered pre + concurrent execute
+  tools-->>session: tool/call + tool/result
+  session-->>sdk: session/event stream
+  driver->>session: step/end
+  driver->>session: turn/end
+  driver-->>sdk: agent/status = idle
+```

@@ -1,0 +1,30 @@
+# DeepSeek Harness 系统全景
+
+从用户入口、Profile 组合、Cordis 容器到 Agent、工具、执行环境与持久化的端到端全景。
+
+```mermaid
+flowchart LR
+  entrypoints["用户与自动化<br/>CLI / Browser / SDK / ACP"]
+  profiles["dsh Profiles<br/>bundle + patch layers"]
+  cordis["Cordis 插件容器<br/>Context / Loader / Fiber"]
+  agent["Agent 核心<br/>registry + loop + prompt"]
+  tools["工具执行管线<br/>policy / guard / hooks"]
+  providers["能力提供者<br/>LLM / FS / Shell / Web"]
+  execution["执行环境<br/>Local sandbox / E2B"]
+  surfaces["交互表面<br/>Web UI / headless"]
+  api["Typert API / SDK<br/>Remote + JSON-RPC"]
+  state["会话与应用状态<br/>JSONL / SQLite / projections"]
+  extensions["扩展与编排<br/>subagent / workflow / hooks"]
+  entrypoints -->|选择运行表面| profiles
+  profiles -->|组合 patch 层| cordis
+  cordis -->|挂载服务| agent
+  agent -->|tool calls| tools
+  tools -->|按 seam 分派| providers
+  providers -->|受策略约束| execution
+  surfaces -->|Profile 配置| profiles
+  surfaces -->|RPC / events| api
+  api -.->|控制与观察| agent
+  agent -->|session/event| state
+  extensions -.->|组合能力| agent
+  extensions -.->|注册工具| tools
+```

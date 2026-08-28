@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/01-system-landscape.architecture.json",
+  "output": "/Users/bytedance/MyProject/ai-project-arch/deepseek-harness/diagrams/01-system-landscape.html",
+  "specification": {
+    "sha256": "c18b189724e1e445870a989c744d750970b72b2aac1d1702ae4a0c4595c19a04",
+    "bytes": 9040
+  },
+  "artifact": {
+    "sha256": "a990608c9d3bc0b93776de583333637f2e2c332586c6961923d637aab5c3a8c3",
+    "bytes": 724198
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "evidence": {
+    "verified": true,
+    "repository": "https://github.com/deepseek-ai/deepseek-harness",
+    "revision": "cd5ef8148158c3a752a658978873241fdf8e2bbc",
+    "references": 23
+  }
+}
