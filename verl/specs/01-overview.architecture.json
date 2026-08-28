@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "VERL 分布式强化学习运行时",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/verl-project/verl",
+      "revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace"
+    },
+    "views": [
+      {
+        "id": "bootstrap",
+        "label": "启动与资源编排",
+        "focus": ["job_config", "ray_entry", "ppo_trainer", "ray_resources", "training_workers"],
+        "note": "Hydra 配置进入 Ray TaskRunner，Trainer 再把角色映射到 GPU WorkerGroup。"
+      },
+      {
+        "id": "rollout_loop",
+        "label": "Rollout 与奖励闭环",
+        "focus": ["rl_data", "ppo_trainer", "agent_loop", "rollout_servers", "reward_loop", "experience_queue"],
+        "note": "Prompt 经 Agent Loop 生成轨迹并评分，再由队列交给 Trainer 采样。"
+      },
+      {
+        "id": "optimization",
+        "label": "优化与权重同步",
+        "focus": ["experience_queue", "ppo_trainer", "training_workers", "training_engines", "rollout_servers"],
+        "note": "Trainer 驱动策略与可选价值模型更新，并将新权重同步给推理副本。"
+      }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [56, 104],
+    "cols": 5,
+    "gapX": 72,
+    "gapY": 92,
+    "cellW": 176,
+    "cellH": 72
+  },
+  "components": [
+    {
+      "id": "job_config",
+      "type": "external",
+      "label": "训练脚本与配置",
+      "sublabel": "算法与超参数",
+      "tag": "Hydra",
+      "row": 0,
+      "col": 0,
+      "sources": [
+        { "path": "verl/trainer/config/ppo_trainer.yaml", "label": "默认训练配置" },
+        { "path": "examples/ppo_trainer/run_qwen3_8b_fsdp.sh", "label": "PPO 启动示例" }
+      ]
+    },
+    {
+      "id": "ray_entry",
+      "type": "backend",
+      "label": "Ray TaskRunnerV1",
+      "sublabel": "Ray 启动入口",
+      "row": 0,
+      "col": 1,
+      "sources": [
+        { "path": "verl/trainer/main_ppo.py", "line": 33, "end_line": 93, "label": "Ray 启动入口" },
+        { "path": "verl/trainer/main_ppo.py", "line": 102, "end_line": 163, "label": "V1 TaskRunner" }
+      ]
+    },
+    {
+      "id": "ppo_trainer",
+      "type": "backend",
+      "label": "PPOTrainer V1",
+      "sublabel": "训练控制循环",
+      "tag": "默认 sync",
+      "row": 0,
+      "col": 2,
+      "sources": [
+        { "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 119, "label": "Trainer 基类" },
+        { "path": "verl/trainer/ppo/v1/trainer_sync.py", "label": "同步训练实现" }
+      ]
+    },
+    {
+      "id": "agent_loop",
+      "type": "backend",
+      "label": "AgentLoopManager",
+      "sublabel": "生成与工具调用",
+      "row": 0,
+      "col": 3,
+      "sources": [
+        { "path": "verl/trainer/ppo/v1/agent_loop_tq.py", "label": "TransferQueue 适配" },
+        { "path": "verl/experimental/agent_loop/agent_loop.py", "label": "Agent Loop 管理器" }
+      ]
+    },
+    {
+      "id": "rollout_servers",
+      "type": "cloud",
+      "label": "LLM Rollout Servers",
+      "sublabel": "vLLM / SGLang",
+      "tag": "TRT-LLM / HF",
+      "row": 0,
+      "col": 4,
+      "sources": [
+        { "path": "verl/workers/rollout/llm_server.py", "label": "服务管理与客户端" },
+        { "path": "verl/workers/rollout/vllm_rollout/vllm_rollout.py", "label": "vLLM 后端" },
+        { "path": "verl/workers/rollout/sglang_rollout/sglang_rollout.py", "label": "SGLang 后端" }
+      ]
+    },
+    {
+      "id": "rl_data",
+      "type": "database",
+      "label": "RL 数据批次",
+      "sublabel": "Prompt / DataProto",
+      "row": 1,
+      "col": 0,
+      "sources": [
+        { "path": "verl/protocol.py", "line": 318, "label": "DataProto" },
+        { "path": "verl/utils/dataset/rl_dataset.py", "label": "RL 数据集" }
+      ]
+    },
+    {
+      "id": "ray_resources",
+      "type": "cloud",
+      "label": "Ray ResourcePool",
+      "sublabel": "GPU 调度",
+      "tag": "跨节点调度",
+      "row": 1,
+      "col": 1,
+      "sources": [
+        { "path": "verl/single_controller/ray/base.py", "line": 113, "end_line": 163, "label": "Ray 资源池" },
+        { "path": "verl/single_controller/ray/base.py", "line": 185, "label": "资源映射" }
+      ]
+    },
+    {
+      "id": "training_workers",
+      "type": "backend",
+      "label": "训练 WorkerGroups",
+      "sublabel": "Actor / Ref / Critic",
+      "tag": "分布式 RPC",
+      "row": 1,
+      "col": 2,
+      "sources": [
+        { "path": "verl/workers/engine_workers.py", "label": "统一 Worker 实现" },
+        { "path": "verl/single_controller/base/worker_group.py", "line": 123, "label": "WorkerGroup 抽象" }
+      ]
+    },
+    {
+      "id": "experience_queue",
+      "type": "messagebus",
+      "label": "经验传输与采样",
+      "sublabel": "TransferQueue",
+      "tag": "ReplayBuffer",
+      "row": 1,
+      "col": 3,
+      "sources": [
+        { "path": "verl/trainer/ppo/v1/replay_buffer.py", "label": "经验回放" },
+        { "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 144, "end_line": 190, "label": "Sampler 构建" }
+      ]
+    },
+    {
+      "id": "reward_loop",
+      "type": "backend",
+      "label": "RewardLoopManager",
+      "sublabel": "规则 / 模型奖励",
+      "tag": "按配置启用 RM",
+      "row": 1,
+      "col": 4,
+      "sources": [
+        { "path": "verl/experimental/reward_loop/reward_loop.py", "label": "奖励调度" },
+        { "path": "verl/experimental/reward_loop/reward_model.py", "label": "奖励模型" }
+      ]
+    },
+    {
+      "id": "training_engines",
+      "type": "external",
+      "label": "训练执行后端",
+      "sublabel": "FSDP / Megatron",
+      "tag": "多训练后端",
+      "row": 2,
+      "col": 2,
+      "sources": [
+        { "path": "verl/workers/engine/fsdp/transformer_impl.py", "label": "FSDP" },
+        { "path": "verl/workers/engine/megatron/transformer_impl.py", "label": "Megatron-LM" },
+        { "path": "verl/workers/engine/torchtitan/transformer_impl.py", "label": "TorchTitan" }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Ray 分布式运行时",
+      "wraps": [
+        "ray_entry",
+        "ppo_trainer",
+        "agent_loop",
+        "rollout_servers",
+        "ray_resources",
+        "training_workers",
+        "experience_queue",
+        "reward_loop"
+      ],
+      "pad": 26
+    }
+  ],
+  "connections": [
+    {
+      "id": "launch_job",
+      "from": "job_config",
+      "to": "ray_entry",
+      "label": "配置并启动",
+      "variant": "emphasis"
+    },
+    {
+      "id": "start_trainer",
+      "from": "ray_entry",
+      "to": "ppo_trainer",
+      "label": "远程 run()",
+      "variant": "emphasis"
+    },
+    {
+      "id": "load_training_data",
+      "from": "rl_data",
+      "to": "ppo_trainer",
+      "label": "训练批次",
+      "via": [[208, 298], [208, 218], [520, 218], [520, 134]]
+    },
+    {
+      "id": "request_rollout",
+      "from": "ppo_trainer",
+      "to": "agent_loop",
+      "label": "提交 prompts",
+      "variant": "emphasis"
+    },
+    {
+      "id": "generate_trajectories",
+      "from": "agent_loop",
+      "to": "rollout_servers",
+      "label": "异步生成",
+      "variant": "emphasis"
+    },
+    {
+      "id": "score_trajectories",
+      "from": "rollout_servers",
+      "to": "reward_loop",
+      "label": "完整轨迹",
+      "variant": "emphasis",
+      "labelAt": [1108, 178]
+    },
+    {
+      "id": "enqueue_experience",
+      "from": "reward_loop",
+      "to": "experience_queue",
+      "label": "奖励与轨迹",
+      "variant": "emphasis"
+    },
+    {
+      "id": "sample_experience",
+      "from": "experience_queue",
+      "to": "ppo_trainer",
+      "label": "筛选后样本",
+      "variant": "emphasis",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "allocate_workers",
+      "from": "ray_resources",
+      "to": "training_workers",
+      "label": "映射 GPU 角色"
+    },
+    {
+      "id": "dispatch_updates",
+      "from": "ppo_trainer",
+      "to": "training_workers",
+      "label": "策略 / 价值更新",
+      "labelAt": [688, 186]
+    },
+    {
+      "id": "execute_training",
+      "from": "training_workers",
+      "to": "training_engines",
+      "label": "train_batch",
+      "labelAt": [612, 342]
+    },
+    {
+      "id": "sync_rollout_weights",
+      "from": "training_workers",
+      "to": "rollout_servers",
+      "label": "Checkpoint / 权重同步",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "right",
+      "via": [[704, 298], [704, 380], [1208, 380], [1208, 134]],
+      "labelAt": [704, 342]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "训练闭环",
+      "items": [
+        "数据进入 Agent Loop，Rollout Server 生成轨迹，Reward Loop 完成评分",
+        "TransferQueue 与 ReplayBuffer 解耦生成和训练，Trainer 消费样本并更新参数"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "可插拔执行",
+      "items": [
+        "训练侧可选 FSDP、Megatron-LM、TorchTitan、VeOmni 等后端",
+        "推理侧可选 vLLM、SGLang、TensorRT-LLM 或 Hugging Face 实现"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "配置边界",
+      "items": [
+        "默认 V1 trainer_mode 为 sync；另有 colocate_async 与 separate_async",
+        "Critic、Reference Policy 和模型奖励均由算法及配置决定是否启用"
+      ]
+    }
+  ]
+}

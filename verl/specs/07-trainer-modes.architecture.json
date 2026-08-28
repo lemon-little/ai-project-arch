@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "VERL V1 三种 Trainer 模式",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [1020, 600],
+    "repository": {
+      "url": "https://github.com/verl-project/verl",
+      "revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace"
+    },
+    "views": [
+      { "id": "sync", "label": "sync", "focus": ["sync_controller", "sync_shared"], "note": "训练与 Rollout 共置；完整生成后暂停副本，再训练和同步权重。" },
+      { "id": "colocate", "label": "colocate_async", "focus": ["colocate_controller", "colocate_shared", "colocate_queue"], "note": "仍然共置，但允许部分轨迹与 warmup；采样结束会中止未完成请求并切换显存状态。" },
+      { "id": "separate", "label": "separate_async", "focus": ["separate_controller", "separate_train", "separate_rollout", "separate_queue"], "note": "训练与独立 Rollout 使用不同资源池，通过非 naive checkpoint backend 同步参数。" }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [58, 100],
+    "cols": 3,
+    "gapX": 126,
+    "gapY": 62,
+    "cellW": 220,
+    "cellH": 60
+  },
+  "components": [
+    { "id": "sync_controller", "type": "backend", "label": "PPOTrainerSync", "sublabel": "完整 batch 同步", "tag": "默认", "row": 0, "col": 0, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_sync.py", "line": 25, "label": "同步模式" }] },
+    { "id": "sync_shared", "type": "cloud", "label": "共享 GPU Pool", "sublabel": "Actor + Rollout", "tag": "无 partial rollout", "row": 1, "col": 0, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_sync.py", "line": 26, "end_line": 42, "label": "共置与同步" }] },
+    { "id": "colocate_controller", "type": "backend", "label": "Colocate Async", "sublabel": "PPOTrainer · 异步采样", "row": 0, "col": 1, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_colocate_async.py", "line": 26, "label": "共置异步模式" }] },
+    { "id": "colocate_shared", "type": "cloud", "label": "共享 GPU Pool", "sublabel": "训练 / 生成切换", "tag": "partial rollout", "row": 1, "col": 1, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_colocate_async.py", "line": 38, "end_line": 59, "label": "warmup 与切换" }] },
+    { "id": "colocate_queue", "type": "messagebus", "label": "Async ReplayBuffer", "sublabel": "warmup + freshness", "row": 2, "col": 1, "sources": [{ "path": "verl/trainer/ppo/v1/replay_buffer.py", "line": 497, "label": "异步采样器" }] },
+    { "id": "separate_controller", "type": "backend", "label": "Separate Async", "sublabel": "PPOTrainer · 解耦更新", "row": 0, "col": 2, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_separate_async.py", "line": 43, "label": "分离异步模式" }] },
+    { "id": "separate_train", "type": "cloud", "label": "Trainer GPU Pool", "sublabel": "DetachActorWorker", "tag": "可借给 rollout", "row": 1, "col": 2, "sources": [{ "path": "verl/experimental/separation/engine_workers.py", "label": "分离训练 Worker" }] },
+    { "id": "separate_rollout", "type": "cloud", "label": "Standalone Rollout", "sublabel": "独立 GPU Pool", "tag": "持续生成", "row": 2, "col": 2, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_separate_async.py", "line": 113, "end_line": 138, "label": "独立推理副本" }] },
+    { "id": "separate_queue", "type": "messagebus", "label": "Async ReplayBuffer", "sublabel": "version freshness", "row": 3, "col": 2, "sources": [{ "path": "verl/trainer/ppo/v1/replay_buffer.py", "line": 497, "label": "异步采样器" }] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "sync", "wraps": ["sync_controller", "sync_shared"], "pad": 18 },
+    { "kind": "region", "label": "colocate_async", "wraps": ["colocate_controller", "colocate_shared", "colocate_queue"], "pad": 18 },
+    { "kind": "region", "label": "separate_async", "wraps": ["separate_controller", "separate_train", "separate_rollout", "separate_queue"], "pad": 18 }
+  ],
+  "connections": [
+    { "id": "sync_run", "from": "sync_controller", "to": "sync_shared", "label": "generate → train", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [118, 174] },
+    { "id": "colocate_run", "from": "colocate_controller", "to": "colocate_shared", "label": "abort / sleep / resume", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [464, 174] },
+    { "id": "colocate_buffer", "from": "colocate_shared", "to": "colocate_queue", "label": "partial trajectories", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [464, 314] },
+    { "id": "separate_train_path", "from": "separate_controller", "to": "separate_train", "label": "train mini-batches", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [810, 174] },
+    { "id": "separate_rollout_path", "from": "separate_train", "to": "separate_rollout", "label": "NCCL / NIXL / Mooncake", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [810, 314] },
+    { "id": "separate_buffer", "from": "separate_rollout", "to": "separate_queue", "label": "continuous trajectories", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [810, 436] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "sync", "items": ["实现最直接，训练和生成严格串行", "权重更新后唤醒副本，采样结束释放权重与 KV cache"] },
+    { "dot": "emerald", "title": "colocate_async", "items": ["共享 GPU，但通过 warmup 和 partial rollout 重叠流水线", "每轮边界中止未完成请求，更新权重后恢复生成"] },
+    { "dot": "amber", "title": "separate_async", "items": ["独立生成资源持续服务，训练按 parameter_sync_step 更新", "要求非 naive 参数同步；可选 hybrid switching 借出空闲训练 GPU"] }
+  ]
+}

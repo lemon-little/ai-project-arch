@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "diagram_type": "lifecycle",
+  "meta": {
+    "title": "VERL 训练任务生命周期",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/verl-project/verl",
+      "revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace"
+    },
+    "animation": "trace",
+    "viewBox": [980, 590],
+    "views": [
+      { "id": "main", "label": "训练主线", "focus": ["configured", "setup", "resume", "training", "completed"], "note": "配置经资源装配和可选恢复后进入训练，达到总步数后正常完成。" },
+      { "id": "checkpoint", "label": "保存与恢复", "focus": ["resume", "restoring", "training", "saving", "persisted"], "note": "Actor、Critic、DataLoader 与异步 TransferQueue 状态共同构成恢复点。" },
+      { "id": "validation", "label": "验证与失败", "focus": ["setup", "training", "validating", "failed", "completed"], "note": "验证按频率或末步触发；初始化或训练异常进入失败终态。" }
+    ]
+  },
+  "lanes": [
+    { "id": "main", "label": "训练主线" },
+    { "id": "periodic", "label": "周期任务" },
+    { "id": "recovery", "label": "恢复路径" },
+    { "id": "terminal", "label": "结果" }
+  ],
+  "states": [
+    { "id": "configured", "type": "start", "label": "Configured", "sublabel": "Hydra 已解析", "lane": "main", "col": 0, "step": "01", "tag": "entry", "sources": [{ "path": "verl/trainer/config/ppo_trainer.yaml", "label": "训练配置" }] },
+    { "id": "setup", "type": "active", "label": "Setup", "sublabel": "Worker 与服务就绪", "lane": "main", "col": 1, "step": "02", "tag": "resources", "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 119, "label": "Trainer 初始化" }] },
+    { "id": "resume", "type": "decision", "label": "Resume Check", "sublabel": "disable / auto / path", "lane": "main", "col": 2, "step": "03", "tag": "checkpoint", "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 793, "label": "恢复点检查" }] },
+    { "id": "training", "type": "active", "label": "Training", "sublabel": "sample + update", "lane": "main", "col": 3, "step": "04", "tag": "loop", "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 389, "label": "训练主循环" }] },
+    { "id": "completed", "type": "success", "label": "Completed", "sublabel": "final step logged", "lane": "main", "col": 4, "step": "05", "tag": "done", "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 445, "label": "训练结束条件" }] },
+    { "id": "restoring", "type": "active", "label": "Restoring", "sublabel": "恢复 step 与数据", "lane": "recovery", "col": 0, "tag": "optional", "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 793, "label": "加载 Checkpoint" }] },
+    { "id": "validating", "type": "waiting", "label": "Validating", "sublabel": "生成与评分", "lane": "periodic", "col": 1, "tag": "test_freq", "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 973, "label": "验证流程" }] },
+    { "id": "saving", "type": "active", "label": "Saving", "sublabel": "模型与队列状态", "lane": "periodic", "col": 2, "tag": "save_freq", "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 889, "label": "保存 Checkpoint" }] },
+    { "id": "failed", "type": "failure", "label": "Failed", "sublabel": "配置或运行异常", "lane": "terminal", "col": 0, "tag": "terminal", "yOffset": -40, "sources": [{ "path": "verl/trainer/main_ppo.py", "label": "训练任务入口" }] },
+    { "id": "persisted", "type": "success", "label": "Checkpointed", "sublabel": "latest 指针更新", "lane": "terminal", "col": 2, "tag": "durable", "yOffset": -40, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 952, "label": "持久化 latest 指针" }] }
+  ],
+  "transitions": [
+    { "id": "resume_restore", "from": "resume", "to": "restoring", "label": "发现恢复点", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [402, 215] },
+    { "id": "train_validate", "from": "training", "to": "validating", "label": "test_freq", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [556, 215] },
+    { "id": "train_save", "from": "training", "to": "saving", "label": "save_freq", "variant": "dashed", "fromSide": "right", "toSide": "top", "via": [[640, 157], [640, 225], [710, 225]], "labelAt": [675, 215] },
+    { "id": "save_persist", "from": "saving", "to": "persisted", "label": "atomic marker", "variant": "emphasis", "labelAt": [710, 350] },
+    { "id": "setup_fail", "from": "setup", "to": "failed", "label": "异常", "variant": "security", "fromSide": "bottom", "toSide": "left", "via": [[248, 220], [300, 220], [300, 439]], "labelAt": [276, 210] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "主循环", "items": ["fit() 从恢复后的 global_step 继续推进 epoch 与 step", "每一步执行采样、优势估计、Actor/Critic 更新与指标记录"] },
+    { "dot": "emerald", "title": "一致性恢复", "items": ["Checkpoint 包含 Actor、可选 Critic、DataLoader 与 step", "异步模式还会保存 TransferQueue，并重发恢复时仍在途的 prompt"] },
+    { "dot": "amber", "title": "周期边界", "items": ["save_freq 与 test_freq 在末步也会触发", "最终状态由训练完成或不可恢复异常明确收束"] }
+  ]
+}

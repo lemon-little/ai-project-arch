@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "diagram_type": "dataflow",
+  "meta": {
+    "title": "VERL 训练数据与参数流",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/verl-project/verl",
+      "revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace"
+    },
+    "viewBox": [1080, 650],
+    "views": [
+      { "id": "prompt_to_reward", "label": "Prompt 到奖励", "focus": ["dataset", "agent_loop", "rollout", "reward_loop", "transfer_queue"], "note": "Prompt 经 Agent Loop 与 Rollout 生成轨迹，再补充规则或模型奖励。" },
+      { "id": "experience_to_update", "label": "经验到更新", "focus": ["transfer_queue", "replay_buffer", "trainer", "model_workers"], "note": "TransferQueue 保存轨迹，ReplayBuffer 选择可训练样本，Trainer 驱动模型更新。" },
+      { "id": "outputs", "label": "参数与观测输出", "focus": ["model_workers", "checkpoint", "metrics"], "note": "新参数进入 checkpoint，训练指标进入实验跟踪。" }
+    ]
+  },
+  "stages": [
+    { "label": "输入" },
+    { "label": "生成" },
+    { "label": "评分与交换" },
+    { "label": "学习" },
+    { "label": "持久化与观测" }
+  ],
+  "nodes": [
+    { "id": "dataset", "type": "database", "label": "RL Dataset", "sublabel": "prompts / truth", "stage": 0, "row": 0, "tag": "Parquet", "sources": [{ "path": "verl/utils/dataset/rl_dataset.py", "label": "RL 数据集" }] },
+    { "id": "agent_loop", "type": "backend", "label": "Agent Loop", "sublabel": "会话与工具轨迹", "stage": 1, "row": 0, "sources": [{ "path": "verl/experimental/agent_loop/agent_loop.py", "label": "Agent Loop" }] },
+    { "id": "rollout", "type": "cloud", "label": "Rollout Servers", "sublabel": "token generation", "stage": 1, "row": 3, "sources": [{ "path": "verl/workers/rollout/llm_server.py", "label": "LLM 服务" }] },
+    { "id": "reward_loop", "type": "backend", "label": "Reward Loop", "sublabel": "rule / reward model", "stage": 2, "row": 0, "sources": [{ "path": "verl/experimental/reward_loop/reward_loop.py", "label": "奖励调度" }] },
+    { "id": "transfer_queue", "type": "messagebus", "label": "TransferQueue", "sublabel": "prompt 与 trajectory", "stage": 2, "row": 2, "sources": [{ "path": "verl/trainer/ppo/v1/agent_loop_tq.py", "label": "轨迹写入队列" }, { "path": "verl/utils/transferqueue_utils.py", "label": "TransferQueue 工具" }] },
+    { "id": "replay_buffer", "type": "database", "label": "ReplayBuffer", "sublabel": "过滤与新鲜度", "stage": 2, "row": 3, "sources": [{ "path": "verl/trainer/ppo/v1/replay_buffer.py", "label": "经验回放" }] },
+    { "id": "trainer", "type": "backend", "label": "PPOTrainer", "sublabel": "优势与损失", "stage": 3, "row": 1, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "label": "Trainer 控制循环" }] },
+    { "id": "model_workers", "type": "backend", "label": "Actor / Critic", "sublabel": "distributed train_batch", "stage": 3, "row": 3, "sources": [{ "path": "verl/workers/engine_workers.py", "label": "训练 Worker" }] },
+    { "id": "checkpoint", "type": "database", "label": "CheckpointEngine", "sublabel": "模型与优化器状态", "stage": 4, "row": 1, "sources": [{ "path": "verl/checkpoint_engine/base.py", "label": "Checkpoint 引擎" }] },
+    { "id": "metrics", "type": "external", "label": "Experiment Tracking", "sublabel": "metrics / samples", "stage": 4, "row": 3, "sources": [{ "path": "verl/utils/tracking.py", "label": "实验跟踪" }] }
+  ],
+  "flows": [
+    { "id": "dataset_prompts", "from": "dataset", "to": "agent_loop", "label": "prompt batch", "classification": "DataProto", "variant": "emphasis", "route": "straight" },
+    { "id": "generation_request", "from": "agent_loop", "to": "rollout", "label": "chat / token request", "classification": "async request", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [315, 200] },
+    { "id": "generated_trajectory", "from": "rollout", "to": "reward_loop", "label": "responses + log_probs", "classification": "trajectory", "variant": "emphasis" },
+    { "id": "rewarded_trajectory", "from": "reward_loop", "to": "transfer_queue", "label": "rewarded trajectory", "classification": "KVBatchMeta", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [530, 200] },
+    { "id": "queue_to_replay", "from": "transfer_queue", "to": "replay_buffer", "label": "sampleable groups", "classification": "policy versioned", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [530, 428] },
+    { "id": "selected_batch", "from": "replay_buffer", "to": "trainer", "label": "filtered train batch", "classification": "on/off-policy bounded", "variant": "emphasis", "labelAt": [638, 428] },
+    { "id": "optimization_batch", "from": "trainer", "to": "model_workers", "label": "advantages + returns", "classification": "TensorDict", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [745, 314] },
+    { "id": "model_state", "from": "model_workers", "to": "checkpoint", "label": "policy / optimizer state", "classification": "sharded weights", "variant": "emphasis" },
+    { "id": "training_metrics", "from": "model_workers", "to": "metrics", "label": "loss / throughput", "classification": "aggregated metrics", "variant": "default", "route": "straight", "labelAt": [850, 540] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "数据契约", "items": ["DataProto / TensorDict 携带张量，non_tensor_batch 携带数据源与奖励元信息", "V1 异步路径使用 TransferQueue 的 KVBatchMeta 交换 prompt 与 trajectory"] },
+    { "dot": "emerald", "title": "经验选择", "items": ["ReplayBuffer 负责组过滤、策略版本新鲜度与 batch 采样", "训练侧只消费满足算法与并行约束的样本"] },
+    { "dot": "amber", "title": "闭环输出", "items": ["Actor/Critic 产生新权重、优化器状态和训练指标", "权重刷新链路在单轮训练时序图中单独展开"] }
+  ]
+}

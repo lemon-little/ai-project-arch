@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "VERL 其他训练与工具入口",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [1040, 500],
+    "repository": {
+      "url": "https://github.com/verl-project/verl",
+      "revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace"
+    },
+    "views": [
+      { "id": "sft", "label": "监督微调", "focus": ["sft_entry", "sft_trainer", "sft_engine"], "note": "SFT 支持单进程 SPMD 和 Ray 编排，复用统一 TrainingWorker 与训练引擎。" },
+      { "id": "tools", "label": "生成与评估", "focus": ["generation_entry", "rollout_replicas", "generated_data", "eval_entry", "reward_tasks", "eval_metrics"], "note": "批量生成将 responses 写回 Parquet，离线评估用 Ray 并行执行奖励函数。" },
+      { "id": "experimental", "label": "实验路径", "focus": ["async_entry", "async_controller", "async_queue"], "note": "Experimental 提供 fully async policy、动态资源调度和 one-step off-policy 路径。" }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [42, 105],
+    "cols": 4,
+    "gapX": 70,
+    "gapY": 58,
+    "cellW": 170,
+    "cellH": 62
+  },
+  "components": [
+    { "id": "sft_entry", "type": "external", "label": "SFT 配置入口", "sublabel": "Hydra + dataset", "row": 0, "col": 0, "sources": [{ "path": "verl/trainer/config/sft_trainer_engine.yaml", "label": "SFT 配置" }, { "path": "examples/sft/gsm8k/run_qwen3_8b_fsdp.sh", "label": "启动示例" }] },
+    { "id": "sft_trainer", "type": "backend", "label": "SFTTrainer", "sublabel": "SPMD / Ray", "row": 1, "col": 0, "sources": [{ "path": "verl/trainer/sft_trainer.py", "label": "SPMD Trainer" }, { "path": "verl/trainer/sft_trainer_ray.py", "label": "Ray Trainer" }] },
+    { "id": "sft_engine", "type": "cloud", "label": "TrainingWorker", "sublabel": "SFT loss + checkpoint", "row": 2, "col": 0, "sources": [{ "path": "verl/workers/engine_workers.py", "label": "训练 Worker" }] },
+    { "id": "eval_entry", "type": "external", "label": "离线评估入口", "sublabel": "generated parquet", "row": 0, "col": 1, "sources": [{ "path": "verl/trainer/main_eval.py", "line": 41, "label": "评估入口" }] },
+    { "id": "reward_tasks", "type": "backend", "label": "Ray Reward Tasks", "sublabel": "custom reward_fn", "row": 1, "col": 1, "sources": [{ "path": "verl/trainer/main_eval.py", "line": 33, "end_line": 38, "label": "远程评分" }] },
+    { "id": "eval_metrics", "type": "database", "label": "Evaluation Metrics", "sublabel": "test_score / source", "row": 2, "col": 1, "sources": [{ "path": "verl/trainer/main_eval.py", "line": 70, "end_line": 79, "label": "指标聚合" }] },
+    { "id": "generation_entry", "type": "external", "label": "批量生成入口", "sublabel": "prompt parquet", "row": 0, "col": 2, "sources": [{ "path": "verl/trainer/main_generation_server.py", "line": 122, "label": "生成入口" }] },
+    { "id": "rollout_replicas", "type": "cloud", "label": "Rollout Replicas", "sublabel": "OpenAI-compatible API", "row": 1, "col": 2, "sources": [{ "path": "verl/trainer/main_generation_server.py", "line": 32, "end_line": 55, "label": "独立推理服务" }] },
+    { "id": "generated_data", "type": "database", "label": "Generated Parquet", "sublabel": "responses[]", "row": 2, "col": 2, "sources": [{ "path": "verl/trainer/main_generation_server.py", "line": 176, "end_line": 186, "label": "生成结果" }] },
+    { "id": "async_entry", "type": "external", "label": "Experimental", "sublabel": "fully async / one-step", "row": 0, "col": 3, "sources": [{ "path": "verl/experimental/fully_async_policy/fully_async_main.py", "label": "Fully Async 入口" }, { "path": "verl/experimental/one_step_off_policy/main_ppo.py", "label": "One-step 入口" }] },
+    { "id": "async_controller", "type": "backend", "label": "Async Controller", "sublabel": "trainer + rollouter", "row": 1, "col": 3, "sources": [{ "path": "verl/experimental/fully_async_policy/fully_async_trainer.py", "label": "异步 Trainer" }, { "path": "verl/experimental/fully_async_policy/fully_async_rollouter.py", "label": "异步 Rollouter" }] },
+    { "id": "async_queue", "type": "messagebus", "label": "Message Queue", "sublabel": "policy versions", "row": 2, "col": 3, "sources": [{ "path": "verl/experimental/fully_async_policy/message_queue.py", "label": "消息队列" }, { "path": "verl/experimental/fully_async_policy/dynamic_schedule/dynamic_resource_controller.py", "label": "动态资源控制" }] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "SFT", "wraps": ["sft_entry", "sft_trainer", "sft_engine"], "pad": 16 },
+    { "kind": "region", "label": "Offline Evaluation", "wraps": ["eval_entry", "reward_tasks", "eval_metrics"], "pad": 16 },
+    { "kind": "region", "label": "Batch Generation", "wraps": ["generation_entry", "rollout_replicas", "generated_data"], "pad": 16 },
+    { "kind": "region", "label": "Experimental", "wraps": ["async_entry", "async_controller", "async_queue"], "pad": 16 }
+  ],
+  "connections": [
+    { "id": "sft_build", "from": "sft_entry", "to": "sft_trainer", "label": "build", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [102, 179] },
+    { "id": "sft_train", "from": "sft_trainer", "to": "sft_engine", "label": "train_batch", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [102, 323] },
+    { "id": "eval_dispatch", "from": "eval_entry", "to": "reward_tasks", "label": "ray.remote", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [342, 179] },
+    { "id": "eval_reduce", "from": "reward_tasks", "to": "eval_metrics", "label": "mean by source", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [342, 323] },
+    { "id": "gen_start", "from": "generation_entry", "to": "rollout_replicas", "label": "async requests", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [582, 179] },
+    { "id": "gen_write", "from": "rollout_replicas", "to": "generated_data", "label": "responses", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [582, 323] },
+    { "id": "async_run", "from": "async_entry", "to": "async_controller", "label": "launch", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [822, 179] },
+    { "id": "async_exchange", "from": "async_controller", "to": "async_queue", "label": "trajectory exchange", "variant": "dashed", "fromSide": "bottom", "toSide": "top", "route": "straight", "labelAt": [822, 323] }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "监督微调", "items": ["SFT 复用统一训练引擎、StatefulDataLoader 与 CheckpointHandler", "既可直接运行，也可由 RayWorkerGroup 编排多 GPU"] },
+    { "dot": "emerald", "title": "离线工具", "items": ["Generation Server 启动推理副本并将多样本响应写回 Parquet", "main_eval 按数据源并行调用奖励函数并汇总 test_score"] },
+    { "dot": "amber", "title": "实验能力", "items": ["Fully Async Policy 将 Trainer 与 Rollouter 通过消息队列解耦", "Dynamic Schedule 与 One-step Off-policy 提供更激进的吞吐和策略新鲜度探索"] }
+  ]
+}

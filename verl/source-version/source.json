@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "project": "verl",
+  "source_path": "/Users/bytedance/MyProject/verl",
+  "remote": "https://github.com/verl-project/verl.git",
+  "version": "0.10.0.dev",
+  "version_file": "verl/version/version",
+  "branch": "main",
+  "revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace",
+  "short_revision": "bd6f5645",
+  "tree": "a7806ccc85f4b056261c9713eee72f92a287b04c",
+  "describe": "v0.8.0-361-gbd6f5645",
+  "exact_tags": [],
+  "commit": {
+    "author_name": "Joel",
+    "author_email": "wuxibin@bytedance.com",
+    "authored_at": "2026-08-28T10:37:33+08:00",
+    "committed_at": "2026-08-28T10:37:33+08:00",
+    "subject": "[veomni] feat: DeepSeek V4 QAT bf16 fake quant training (#7577)"
+  },
+  "worktree": {
+    "tracked_files_clean": true,
+    "dirty": true,
+    "untracked_file_count": 88,
+    "untracked_scope": [
+      "docs/archify/**",
+      "docs/verl-runtime-architecture*"
+    ],
+    "status_sha256": "f683cda7c7d1187740f28df746c6cd20c653d79af026ba18774450e3a18d3c12"
+  },
+  "generator": {
+    "project": "archify",
+    "version": "2.16.0-dev.0",
+    "source_path": "/Users/bytedance/MyProject/archify",
+    "remote": "https://github.com/tt-a1i/archify.git",
+    "branch": "main",
+    "revision": "7fe139ebe2e532941eb4c315057294348e88a2c0",
+    "short_revision": "7fe139e",
+    "tree": "afd483eb3c3a92f8ee00c34a57a995810163bdf4",
+    "describe": "v2.15.0-34-g7fe139e-dirty",
+    "tracked_change_count": 44,
+    "tracked_diff_sha256": "7017028b0c2960fa9667683ba20a38c08b117d7c97c8e8d1fd39a8e62110d9e5"
+  },
+  "archive": {
+    "path": "/Users/bytedance/MyProject/ai-project-arch/verl",
+    "content_file_count": 88,
+    "content_bytes": 15201366,
+    "content_sha256": "f3d99a2a3286e1646e016f6698d88b92ab86c3939921c170aa4f61b247e66cda",
+    "digest_scope": "index, atlas assets, diagrams, specs, tests, visual evidence, and legacy artifacts; excludes README and metadata files"
+  },
+  "evidence": {
+    "repository_revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace",
+    "diagram_count": 8,
+    "node_count": 80,
+    "verified_source_reference_count": 108
+  },
+  "validation": {
+    "atlas_tests": {
+      "passed": 9,
+      "failed": 0
+    },
+    "archify_tests": {
+      "passed": 717,
+      "failed": 0,
+      "skipped": 28
+    },
+    "visual_checks": {
+      "atlas_passed": 8,
+      "legacy_passed": 1,
+      "failed": 0
+    },
+    "browser_checks": {
+      "desktop": "pass",
+      "mobile": "pass",
+      "source_link_navigation": "pass"
+    }
+  },
+  "generated_at": "2026-08-28T06:02:37Z"
+}

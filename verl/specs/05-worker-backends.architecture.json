@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "VERL WorkerGroup 与执行后端",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "viewBox": [1040, 440],
+    "repository": {
+      "url": "https://github.com/verl-project/verl",
+      "revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace"
+    },
+    "views": [
+      { "id": "control", "label": "Single Controller", "focus": ["trainer", "resource_pool", "worker_group", "engine_worker"], "note": "Trainer 通过 Ray ResourcePool 和 WorkerGroup 将统一方法分发到远程 Worker。" },
+      { "id": "training", "label": "训练后端", "focus": ["worker_group", "engine_worker", "training_backends"], "note": "EngineWorker 隔离统一训练接口与 FSDP、Megatron、TorchTitan 等具体实现。" },
+      { "id": "rollout", "label": "推理后端", "focus": ["trainer", "agent_loop", "llm_manager", "rollout_replica", "rollout_backends"], "note": "Agent Loop 经 LLMServerManager 访问复制组，底层可选择多种推理引擎。" }
+    ]
+  },
+  "layout": {
+    "mode": "grid",
+    "origin": [42, 110],
+    "cols": 5,
+    "gapX": 42,
+    "gapY": 100,
+    "cellW": 140,
+    "cellH": 66
+  },
+  "components": [
+    { "id": "trainer", "type": "backend", "label": "PPOTrainer V1", "sublabel": "控制与角色映射", "row": 0, "col": 0, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 119, "label": "Trainer 基类" }] },
+    { "id": "resource_pool", "type": "cloud", "label": "RayResourcePool", "sublabel": "Placement Groups", "row": 0, "col": 1, "sources": [{ "path": "verl/single_controller/ray/base.py", "line": 113, "end_line": 163, "label": "Ray 资源池" }] },
+    { "id": "worker_group", "type": "cloud", "label": "RayWorkerGroup", "sublabel": "远程方法分发", "row": 0, "col": 2, "sources": [{ "path": "verl/single_controller/base/worker_group.py", "line": 123, "label": "WorkerGroup 抽象" }, { "path": "verl/single_controller/ray/base.py", "line": 185, "label": "Ray WorkerGroup" }] },
+    { "id": "engine_worker", "type": "backend", "label": "EngineWorker", "sublabel": "Actor / Ref / Critic", "row": 0, "col": 3, "sources": [{ "path": "verl/workers/engine_workers.py", "label": "统一 Worker" }] },
+    { "id": "training_backends", "type": "external", "label": "训练引擎", "sublabel": "FSDP / Megatron", "tag": "TorchTitan · VeOmni · AutoModel", "row": 0, "col": 4, "sources": [{ "path": "verl/workers/engine/fsdp/transformer_impl.py", "label": "FSDP" }, { "path": "verl/workers/engine/megatron/transformer_impl.py", "label": "Megatron" }, { "path": "verl/workers/engine/torchtitan/transformer_impl.py", "label": "TorchTitan" }] },
+    { "id": "agent_loop", "type": "backend", "label": "AgentLoopManager", "sublabel": "轨迹与工具调用", "row": 1, "col": 0, "sources": [{ "path": "verl/experimental/agent_loop/agent_loop.py", "label": "Agent Loop" }] },
+    { "id": "llm_manager", "type": "cloud", "label": "LLMServerManager", "sublabel": "副本与客户端", "row": 1, "col": 1, "sources": [{ "path": "verl/workers/rollout/llm_server.py", "label": "服务管理器" }] },
+    { "id": "rollout_replica", "type": "cloud", "label": "RolloutReplica", "sublabel": "rank / tensor parallel", "row": 1, "col": 2, "sources": [{ "path": "verl/workers/rollout/replica.py", "label": "推理副本" }] },
+    { "id": "rollout_backends", "type": "external", "label": "推理引擎", "sublabel": "vLLM / SGLang", "tag": "TRT-LLM · HF · Naive", "row": 1, "col": 3, "sources": [{ "path": "verl/workers/rollout/vllm_rollout/vllm_rollout.py", "label": "vLLM" }, { "path": "verl/workers/rollout/sglang_rollout/sglang_rollout.py", "label": "SGLang" }, { "path": "verl/workers/rollout/trtllm_rollout/trtllm_rollout.py", "label": "TensorRT-LLM" }] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "训练执行面", "wraps": ["resource_pool", "worker_group", "engine_worker", "training_backends"], "pad": 18 },
+    { "kind": "region", "label": "生成执行面", "wraps": ["agent_loop", "llm_manager", "rollout_replica", "rollout_backends"], "pad": 18 }
+  ],
+  "connections": [
+    { "id": "allocate", "from": "trainer", "to": "resource_pool", "label": "角色需求", "variant": "emphasis" },
+    { "id": "place", "from": "resource_pool", "to": "worker_group", "label": "PG 调度", "variant": "emphasis" },
+    { "id": "dispatch", "from": "worker_group", "to": "engine_worker", "label": "RPC", "variant": "emphasis" },
+    { "id": "train_engine", "from": "engine_worker", "to": "training_backends", "label": "train_batch", "variant": "emphasis" },
+    { "id": "generate", "from": "agent_loop", "to": "llm_manager", "label": "生成请求", "variant": "emphasis" },
+    { "id": "route", "from": "llm_manager", "to": "rollout_replica", "label": "负载分发", "variant": "emphasis" },
+    { "id": "infer", "from": "rollout_replica", "to": "rollout_backends", "label": "推理调用", "variant": "emphasis" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "控制抽象", "items": ["WorkerGroup 统一远程函数、rank 与数据分发语义", "ResourcePool 将逻辑角色绑定到 Ray Placement Group"] },
+    { "dot": "emerald", "title": "训练后端", "items": ["EngineWorker 对外保持统一 train_batch / checkpoint 接口", "具体并行实现可切换 FSDP、Megatron、TorchTitan、VeOmni 或 AutoModel"] },
+    { "dot": "amber", "title": "推理后端", "items": ["LLMServerManager 管理副本生命周期与客户端路由", "Rollout 可接 vLLM、SGLang、TensorRT-LLM、Hugging Face 或 Naive 实现"] }
+  ]
+}

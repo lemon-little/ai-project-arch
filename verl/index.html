@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="light">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title>VERL Architecture Atlas</title>
+    <link rel="stylesheet" href="atlas.css">
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand-lockup">
+        <button class="icon-button menu-button" type="button" data-action="toggle-nav" aria-label="打开导航" title="打开导航">☰</button>
+        <span class="brand-mark" aria-hidden="true">V</span>
+        <span class="brand-name">VERL Architecture Atlas</span>
+      </div>
+      <div class="header-actions">
+        <button class="icon-button" type="button" data-action="theme" aria-label="切换主题" title="切换主题">☾</button>
+        <button class="icon-button" type="button" data-action="share" aria-label="分享当前视图" title="复制当前视图链接">↗</button>
+        <button class="icon-button" type="button" data-action="open" aria-label="新窗口打开" title="新窗口打开">↗</button>
+        <button class="icon-button" type="button" data-action="export" aria-label="导出当前图" title="下载当前 HTML">⇩</button>
+      </div>
+    </header>
+
+    <main class="atlas-main">
+      <aside class="navigator" data-testid="navigator" aria-label="架构图导航">
+        <div class="navigator-tools">
+          <label class="search-box">
+            <span aria-hidden="true">⌕</span>
+            <input data-testid="diagram-search" type="search" placeholder="搜索图示" autocomplete="off" aria-label="搜索图示">
+            <kbd>⌘K</kbd>
+          </label>
+        </div>
+        <nav class="diagram-list" data-testid="diagram-list" aria-label="图示列表"></nav>
+        <div class="navigator-foot">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span><strong data-ready-count>0</strong> 个视图已就绪</span>
+        </div>
+      </aside>
+
+      <section class="workspace" aria-label="图示工作区">
+        <div class="workspace-bar">
+          <div class="workspace-heading">
+            <span class="workspace-index" data-workspace-index>01</span>
+            <strong class="workspace-title" data-workspace-title>系统总览</strong>
+            <span class="workspace-type" data-workspace-type>Architecture</span>
+          </div>
+          <span class="workspace-summary" data-workspace-summary>训练入口、Ray 编排、推理生成、奖励与参数更新闭环。</span>
+        </div>
+        <iframe data-testid="diagram-frame" title="VERL 架构图" loading="eager"></iframe>
+      </section>
+    </main>
+
+    <button class="nav-scrim" type="button" data-action="close-nav" aria-label="关闭导航"></button>
+    <div class="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="atlas.mjs"></script>
+  </body>
+</html>

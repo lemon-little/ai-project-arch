@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "VERL V1 启动与资源编排",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/verl-project/verl",
+      "revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace"
+    },
+    "viewBox": [720, 404],
+    "views": [
+      { "id": "bootstrap", "label": "启动主链路", "focus": ["config", "validate", "ray_init", "task_runner", "trainer_init", "fit"], "note": "从 Hydra 配置进入 Ray TaskRunner，再构造 V1 Trainer 并启动 fit。" },
+      { "id": "workers", "label": "GPU Worker 编排", "focus": ["ray_init", "resource_pool", "spawn_workers", "init_models", "trainer_init"], "note": "ResourcePool 把角色映射到 Placement Group，WorkerGroup 完成远程模型初始化。" },
+      { "id": "services", "label": "生成与奖励服务", "focus": ["trainer_init", "init_models", "start_services", "fit"], "note": "LLM Server、CheckpointEngine 与 RewardLoop 在训练循环前完成装配。" }
+    ]
+  },
+  "lanes": [
+    { "id": "control", "label": "启动与控制面" },
+    { "id": "runtime", "label": "GPU 执行与服务面" }
+  ],
+  "phases": [
+    { "id": "prepare", "label": "准备", "fromCol": 0, "toCol": 1 },
+    { "id": "bootstrap", "label": "启动 Ray 任务", "fromCol": 2, "toCol": 3, "variant": "emphasis" },
+    { "id": "assemble", "label": "装配并进入训练", "fromCol": 4, "toCol": 5, "variant": "dashed" }
+  ],
+  "groups": [
+    { "id": "gpu_setup", "label": "Worker 与运行时服务", "lane": "runtime", "fromCol": 2, "toCol": 5, "variant": "emphasis" }
+  ],
+  "mainPath": ["config", "validate", "ray_init", "task_runner", "trainer_init", "fit"],
+  "nodes": [
+    { "id": "config", "lane": "control", "col": 0, "type": "external", "label": "训练命令", "sublabel": "Hydra overrides", "tag": "PPO / GRPO", "sources": [{ "path": "verl/trainer/config/ppo_trainer.yaml", "label": "默认训练配置" }, { "path": "examples/ppo_trainer/run_qwen3_8b_fsdp.sh", "label": "PPO 启动示例" }] },
+    { "id": "validate", "lane": "control", "col": 1, "type": "security", "label": "检查", "sublabel": "设备 / 角色", "width": 48, "sources": [{ "path": "verl/utils/config.py", "label": "配置校验" }] },
+    { "id": "ray_init", "lane": "control", "col": 2, "type": "cloud", "label": "ray.init", "sublabel": "env", "width": 56, "sources": [{ "path": "verl/trainer/main_ppo.py", "line": 34, "label": "Ray 启动入口" }] },
+    { "id": "task_runner", "lane": "control", "col": 3, "type": "backend", "label": "Runner", "sublabel": "remote", "width": 42, "sources": [{ "path": "verl/trainer/main_ppo.py", "line": 103, "label": "TaskRunnerV1" }] },
+    { "id": "trainer_init", "lane": "control", "col": 4, "type": "backend", "label": "Trainer", "sublabel": "mode", "width": 42, "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 119, "label": "Trainer 基类" }] },
+    { "id": "fit", "lane": "control", "col": 5, "type": "backend", "label": "进入 fit", "sublabel": "训练与验证循环", "tag": "running", "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 389, "label": "训练循环" }] },
+    { "id": "resource_pool", "lane": "runtime", "col": 2, "type": "cloud", "label": "GPU Pool", "sublabel": "Placement Group", "width": 72, "sources": [{ "path": "verl/single_controller/ray/base.py", "line": 113, "label": "Ray 资源池" }] },
+    { "id": "spawn_workers", "lane": "runtime", "col": 3, "type": "backend", "label": "Workers", "sublabel": "3 roles", "width": 42, "sources": [{ "path": "verl/single_controller/base/worker_group.py", "line": 123, "label": "WorkerGroup 抽象" }] },
+    { "id": "init_models", "lane": "runtime", "col": 4, "type": "backend", "label": "Engines", "sublabel": "2 roles", "width": 42, "sources": [{ "path": "verl/workers/engine_workers.py", "label": "模型 Worker" }] },
+    { "id": "start_services", "lane": "runtime", "col": 5, "type": "messagebus", "label": "运行时服务", "sublabel": "Rollout / Reward / Sync", "sources": [{ "path": "verl/workers/rollout/llm_server.py", "label": "Rollout 服务" }, { "path": "verl/experimental/reward_loop/reward_loop.py", "label": "Reward 服务" }] }
+  ],
+  "edges": [
+    { "id": "config_validate", "from": "config", "to": "validate", "variant": "emphasis" },
+    { "id": "validate_ray", "from": "validate", "to": "ray_init", "variant": "emphasis" },
+    { "id": "ray_task", "from": "ray_init", "to": "task_runner", "label": "remote()", "variant": "emphasis" },
+    { "id": "task_trainer", "from": "task_runner", "to": "trainer_init", "variant": "emphasis" },
+    { "id": "trainer_fit", "from": "trainer_init", "to": "fit", "variant": "emphasis" },
+    { "id": "ray_resources", "from": "ray_init", "to": "resource_pool", "label": "申请 GPU", "fromSide": "bottom", "toSide": "top", "route": "drop" },
+    { "id": "pool_workers", "from": "resource_pool", "to": "spawn_workers" },
+    { "id": "workers_models", "from": "spawn_workers", "to": "init_models" },
+    { "id": "models_services", "from": "init_models", "to": "start_services", "variant": "dashed" },
+    { "id": "services_fit", "from": "start_services", "to": "fit", "label": "ready", "variant": "emphasis", "role": "return", "fromSide": "right", "toSide": "right", "route": "outside-right" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "入口事实", "items": ["verl/trainer/main_ppo.py 负责配置校验、Ray 初始化与 TaskRunnerV1", "trainer.use_v1 默认开启，V0 路径已标记为 deprecated"] },
+    { "dot": "emerald", "title": "资源装配", "items": ["ResourcePoolManager 按节点 GPU 数创建 Placement Group", "RayWorkerGroup 将 Actor、Reference 与可选 Critic 暴露为统一调用面"] },
+    { "dot": "amber", "title": "训练前置", "items": ["Trainer 初始化 LLM Server、CheckpointEngine 与 RewardLoop", "所有服务就绪后才进入 fit(agent_loop_manager)"] }
+  ]
+}

@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "project": "verl",
+  "title": "VERL Architecture Atlas",
+  "entrypoint": "index.html",
+  "source_version": "source-version/source.json",
+  "source_revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace",
+  "diagram_count": 8,
+  "node_count": 80,
+  "verified_source_reference_count": 108,
+  "diagrams": [
+    {
+      "id": "overview",
+      "type": "architecture",
+      "title": "系统总览",
+      "html": "diagrams/01-overview.html",
+      "specification": "specs/01-overview.architecture.json",
+      "html_sha256": "d26a76bfb603ada8d9ff8d9395a8e78c20410584fa322dd9913457d1be75e06d",
+      "specification_sha256": "61ac811d71d13f9cd87cee8c41b8b883c8a39914c1556466febf86a8243c1a86",
+      "nodes": 11,
+      "source_references": 24,
+      "visual_check": "pass"
+    },
+    {
+      "id": "startup",
+      "type": "workflow",
+      "title": "启动与资源编排",
+      "html": "diagrams/02-startup-orchestration.html",
+      "specification": "specs/02-startup-orchestration.workflow.json",
+      "html_sha256": "6085b3e7f71947c1ba391f23545fd5710856c910967c9c2b88d8084934c9f6ac",
+      "specification_sha256": "9733bd02224d56b3d6d6f26e05e4cc8de009a6c123c1093378648d458ec31fdd",
+      "nodes": 10,
+      "source_references": 12,
+      "visual_check": "pass"
+    },
+    {
+      "id": "training-iteration",
+      "type": "sequence",
+      "title": "单轮训练时序",
+      "html": "diagrams/03-training-iteration.html",
+      "specification": "specs/03-training-iteration.sequence.json",
+      "html_sha256": "c60bcbe2a58419d60139ab0b9f6739e552a5fb72d284d1b86ee21e04aec68f93",
+      "specification_sha256": "ad2cb9a4eb725906357fec7de62d312007fa9a98761727055ab8e90e944b9a1c",
+      "nodes": 9,
+      "source_references": 11,
+      "visual_check": "pass"
+    },
+    {
+      "id": "training-dataflow",
+      "type": "dataflow",
+      "title": "训练数据流",
+      "html": "diagrams/04-training-dataflow.html",
+      "specification": "specs/04-training-dataflow.dataflow.json",
+      "html_sha256": "7d9888c86d0aecd2c9d5c849a3637dfa3be27c73f4c9fa0746cd89ac7a783dd5",
+      "specification_sha256": "2f3e9d87156b2af0025ac4008cd73d5e83ef6df4235b411c5c25caa30df37ed5",
+      "nodes": 10,
+      "source_references": 11,
+      "visual_check": "pass"
+    },
+    {
+      "id": "worker-backends",
+      "type": "architecture",
+      "title": "Worker 与后端扩展",
+      "html": "diagrams/05-worker-backends.html",
+      "specification": "specs/05-worker-backends.architecture.json",
+      "html_sha256": "71591c10cad05b61949fa9e62bc8a14f2ea6c4900d9132eeb2913f9b79105329",
+      "specification_sha256": "2584841833f62a6b09a79bb78eeecab8ce4b5fe1e6f984c23533b159e7d81136",
+      "nodes": 9,
+      "source_references": 14,
+      "visual_check": "pass"
+    },
+    {
+      "id": "training-lifecycle",
+      "type": "lifecycle",
+      "title": "训练任务生命周期",
+      "html": "diagrams/06-training-lifecycle.html",
+      "specification": "specs/06-training-lifecycle.lifecycle.json",
+      "html_sha256": "d80e040d57994771b080c8c72b9025aabcf768395e560acbc077ccb339951c85",
+      "specification_sha256": "3025cc4feb6648e930c04c009d44c072d2cb309ea1650b2cf119bbb334031df4",
+      "nodes": 10,
+      "source_references": 10,
+      "visual_check": "pass"
+    },
+    {
+      "id": "trainer-modes",
+      "type": "architecture",
+      "title": "三种 Trainer 模式",
+      "html": "diagrams/07-trainer-modes.html",
+      "specification": "specs/07-trainer-modes.architecture.json",
+      "html_sha256": "754b23c2f08de583e6c1b4542bc83a1390eba5378f668e0055541eade5375e1c",
+      "specification_sha256": "0bfd64ce467f39eb8beaf25650a9bd28795df4d52acfff21062cf15804b61a2f",
+      "nodes": 9,
+      "source_references": 9,
+      "visual_check": "pass"
+    },
+    {
+      "id": "other-entrypoints",
+      "type": "architecture",
+      "title": "其他训练与工具入口",
+      "html": "diagrams/08-other-entrypoints.html",
+      "specification": "specs/08-other-entrypoints.architecture.json",
+      "html_sha256": "467ab7c70bbaeb1450e553f4ac2279e39d2ce8aff7648414c798b41d12a60959",
+      "specification_sha256": "b978399dc046817e2d21a23b9a015787884117f22d45dbc74e42ab90660be429",
+      "nodes": 12,
+      "source_references": 17,
+      "visual_check": "pass"
+    }
+  ],
+  "legacy": {
+    "html": "legacy/verl-runtime-architecture.html",
+    "specification": "legacy/verl-runtime-architecture.architecture.json",
+    "html_sha256": "ab36d052aff5988438f2d189dd682ea3ba8258babfe3e5dc9201d8ae1bda7bf0",
+    "visual_check": "pass"
+  },
+  "generated_at": "2026-08-28T06:02:37Z"
+}

@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "diagram_type": "sequence",
+  "meta": {
+    "title": "VERL 单轮 PPO / GRPO 训练时序",
+    "locale": "zh-CN",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/verl-project/verl",
+      "revision": "bd6f5645023a774e75b3ea1ed63f652feb922ace"
+    },
+    "column_fit": "spread",
+    "viewBox": [1080, 650],
+    "views": [
+      { "id": "generate", "label": "生成轨迹", "focus": ["trainer", "agent", "rollout", "reward", "buffer"], "note": "Trainer 提交 prompt，Agent Loop 调用推理副本并将带奖励轨迹写入队列。" },
+      { "id": "estimate", "label": "估计与优势", "focus": ["buffer", "trainer", "actor", "critic"], "note": "Trainer 取样后计算旧策略、参考策略、价值与优势。" },
+      { "id": "update", "label": "更新与同步", "focus": ["trainer", "actor", "critic", "checkpoint", "rollout"], "note": "可选 Critic 与 Actor 更新完成后，新权重同步给 Rollout 副本。" }
+    ]
+  },
+  "participants": [
+    { "id": "trainer", "type": "backend", "label": "PPOTrainer", "sublabel": "控制循环", "sources": [{ "path": "verl/trainer/ppo/v1/trainer_base.py", "line": 389, "label": "训练循环" }] },
+    { "id": "agent", "type": "backend", "label": "Agent Loop", "sublabel": "轨迹生成", "sources": [{ "path": "verl/experimental/agent_loop/agent_loop.py", "label": "Agent Loop" }, { "path": "verl/trainer/ppo/v1/agent_loop_tq.py", "label": "队列适配" }] },
+    { "id": "rollout", "type": "cloud", "label": "Rollout", "sublabel": "LLM servers", "sources": [{ "path": "verl/workers/rollout/llm_server.py", "label": "LLM 服务" }] },
+    { "id": "reward", "type": "backend", "label": "Reward Loop", "sublabel": "规则 / 模型", "sources": [{ "path": "verl/experimental/reward_loop/reward_loop.py", "label": "奖励调度" }, { "path": "verl/experimental/reward_loop/reward_model.py", "label": "奖励模型" }] },
+    { "id": "buffer", "type": "messagebus", "label": "TQ / Replay", "sublabel": "经验交换", "sources": [{ "path": "verl/trainer/ppo/v1/replay_buffer.py", "label": "ReplayBuffer" }] },
+    { "id": "actor", "type": "backend", "label": "Actor / Ref", "sublabel": "策略模型", "sources": [{ "path": "verl/workers/engine_workers.py", "label": "Actor 与 Ref Worker" }] },
+    { "id": "critic", "type": "backend", "label": "Critic", "sublabel": "按需启用", "sources": [{ "path": "verl/workers/engine_workers.py", "label": "Critic Worker" }] },
+    { "id": "algorithms", "type": "backend", "label": "RL Algorithms", "sublabel": "优势与回报", "sources": [{ "path": "verl/trainer/ppo/core_algos.py", "label": "PPO / GRPO 算法" }] },
+    { "id": "checkpoint", "type": "database", "label": "Checkpoint", "sublabel": "权重同步", "sources": [{ "path": "verl/checkpoint_engine/base.py", "label": "Checkpoint 引擎" }] }
+  ],
+  "segments": [
+    { "from": 150, "to": 312, "label": "Rollout 与奖励" },
+    { "from": 320, "to": 452, "label": "估计与优势" },
+    { "from": 460, "to": 572, "label": "优化与同步" }
+  ],
+  "messages": [
+    { "id": "submit_prompts", "from": "trainer", "to": "agent", "y": 164, "label": "generate_sequences(prompts)", "variant": "emphasis" },
+    { "id": "request_completion", "from": "agent", "to": "rollout", "y": 192, "label": "异步生成请求", "variant": "emphasis" },
+    { "id": "return_tokens", "from": "rollout", "to": "agent", "y": 220, "label": "responses + log_probs", "variant": "return" },
+    { "id": "score_output", "from": "agent", "to": "reward", "y": 248, "label": "完整轨迹", "variant": "emphasis" },
+    { "id": "return_reward", "from": "reward", "to": "agent", "y": 276, "label": "token / outcome rewards", "variant": "return" },
+    { "id": "store_trajectory", "from": "agent", "to": "buffer", "y": 304, "label": "写入带奖励轨迹", "variant": "dashed" },
+    { "id": "sample_batch", "from": "trainer", "to": "buffer", "y": 332, "label": "sample(global_step)", "variant": "emphasis" },
+    { "id": "return_batch", "from": "buffer", "to": "trainer", "y": 360, "label": "KVBatchMeta", "variant": "return" },
+    { "id": "old_log_prob", "from": "trainer", "to": "actor", "y": 388, "label": "compute old / ref log prob", "variant": "default" },
+    { "id": "value_estimate", "from": "trainer", "to": "critic", "y": 416, "label": "compute values（可选）", "variant": "dashed" },
+    { "id": "compute_advantage", "from": "trainer", "to": "algorithms", "y": 444, "label": "compute advantages / returns", "variant": "emphasis" },
+    { "id": "update_critic", "from": "trainer", "to": "critic", "y": 472, "label": "update critic（可选）", "variant": "dashed" },
+    { "id": "update_actor", "from": "trainer", "to": "actor", "y": 500, "label": "update actor", "variant": "emphasis" },
+    { "id": "publish_weights", "from": "actor", "to": "checkpoint", "y": 528, "label": "发布新策略权重", "variant": "emphasis" },
+    { "id": "refresh_rollout", "from": "checkpoint", "to": "rollout", "y": 556, "label": "update_weights(global_step)", "variant": "dashed" }
+  ],
+  "activations": [
+    { "participant": "trainer", "from": 158, "to": 564, "type": "backend" },
+    { "participant": "agent", "from": 160, "to": 312, "type": "backend" },
+    { "participant": "rollout", "from": 186, "to": 228, "type": "cloud" },
+    { "participant": "reward", "from": 242, "to": 284, "type": "backend" },
+    { "participant": "buffer", "from": 298, "to": 368, "type": "messagebus" },
+    { "participant": "actor", "from": 380, "to": 536, "type": "backend" },
+    { "participant": "critic", "from": 408, "to": 480, "type": "backend" },
+    { "participant": "algorithms", "from": 436, "to": 452, "type": "backend" },
+    { "participant": "checkpoint", "from": 520, "to": 564, "type": "database" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "生成阶段", "items": ["Agent Loop 支持单轮、多轮与工具调用", "规则奖励可随生成流式执行；模型奖励可独立或共置"] },
+    { "dot": "emerald", "title": "学习阶段", "items": ["ReplayBuffer 按 global_step 与策略新鲜度筛选样本", "PPO、GRPO 等算法共享同一控制骨架，差异集中在优势与损失配置"] },
+    { "dot": "amber", "title": "可选角色", "items": ["GRPO 等无价值模型算法可以不创建 Critic", "Reference Policy、Teacher 与 Reward Model 均按配置启用"] }
+  ]
+}
